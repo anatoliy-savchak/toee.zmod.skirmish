@@ -1,0 +1,28 @@
+{10}{Another pair of menhirs frames the entryway to this barrow mound atop the hillside. Once, this entrance was smooth stone covered in wards and curses, but now this seal lies in blasted shards. Lying crumpled at the entryway are two kobold corpses, twisted and blackened. }{Another pair of menhirs frames the entryway to this barrow mound atop the hillside. Once, this entrance was smooth stone covered in wards and curses, but now this seal lies in blasted shards. Lying crumpled at the entryway are two kobold corpses, twisted and blackened. }{}{}{}{cs().activate_encounter_m01()}
+{11}{Close.}{}{1}{}{0}{npc.destroy()}
+
+{20}{The sound of bubbling water echoes here and the air is dank and warm. In every corner of the room a fountain bubbles and smokes, with wisps of white-hot vapor rising from the carved needle-filled maws of some strange fish-like creatures. The stone effigies of this strange race are rendered in elegant repose, spouting water from their mouths into basins made by their cradled arms.}{The sound of bubbling water echoes here and the air is dank and warm. In every corner of the room a fountain bubbles and smokes, with wisps of white-hot vapor rising from the carved needle-filled maws of some strange fish-like creatures. The stone effigies of this strange race are rendered in elegant repose, spouting water from their mouths into basins made by their cradled arms.}{}{}{}{cs().activate_encounter_m03()}
+{21}{Close.}{}{1}{}{0}{npc.destroy()}
+
+{40}{Time ravaged this ornate chamber, which was obviously once majestic to behold. Half-crumbled carvings of cityscapes, some atopclouds and others below the waves, adorn the walls here.}{Time ravaged this ornate chamber, which was obviously once majestic to behold. Half-crumbled carvings of cityscapes, some atopclouds and others below the waves, adorn the walls here.}{}{}{}{npc.destroy();cs().activate_encounter_m04()}
+{41}{Close.}{}{1}{}{0}{}
+
+{50}{This crumbling chamber holds six sarcophagi, three along each wall. Reliefs of armored warriors adorn their lids.}{This crumbling chamber holds six sarcophagi, three along each wall. Reliefs of armored warriors adorn their lids.}{}{}{}{npc.destroy();cs().activate_encounter_m05()}
+{51}{Close.}{}{1}{}{0}{}
+
+{60}{This chamber has suffered a cave-in and now most of it is crushed beneath tons of rock, clay,and earth.}{This chamber has suffered a cave-in and now most of it is crushed beneath tons of rock, clay,and earth.}{}{}{}{npc.destroy();cs().activate_encounter_m06()}
+{61}{Close.}{}{1}{}{0}{}
+
+{80}{Within this solemn chamber lies a single raised dais where a grand sarcophagus of carved coral rests.}{Within this solemn chamber lies a single raised dais where a grand sarcophagus of carved coral rests.}{}{}{}{cs().display_encounter_m08()}
+{81}{Continue.}{}{1}{}{82}{}
+{82}{Around the chamber, the crumbling walls are covered with murals that are now little more than smeared paint and powder.}{Around the chamber, the crumbling walls are covered with murals that are now little more than smeared paint and powder.}{}{}{}{cs().get_king_ctrl().do_spell_mage_armor()}
+{83}{Continue.}{}{1}{}{84}{}
+{84}{Amazingly, the sarcophagus itself remains closed and undisturbed.}{Amazingly, the sarcophagus itself remains closed and undisturbed.}{}{}{}{cs().get_king_ctrl().do_spell_bull_strength()}
+{89}{Close.}{}{1}{}{0}{cs().activate_encounter_m08()}
+
+{180}{Within this solemn chamber lies a single raised dais where a grand sarcophagus of carved coral rests.}{Within this solemn chamber lies a single raised dais where a grand sarcophagus of carved coral rests.}{}{}{}{cs().display_encounter_m08B()}
+{181}{Continue.}{}{1}{}{182}{}
+{182}{Around the chamber, the crumbling walls are covered with murals that are now little more than smeared paint and powder.}{Around the chamber, the crumbling walls are covered with murals that are now little more than smeared paint and powder.}{}{}{}{cs().get_king_ctrl().do_spell_mage_armor()}
+{183}{Continue.}{}{1}{}{184}{}
+{184}{Amazingly, the sarcophagus itself remains closed and undisturbed.}{Amazingly, the sarcophagus itself remains closed and undisturbed.}{}{}{}{cs().get_king_ctrl().do_spell_mirror_image()}
+{189}{Close.}{}{1}{}{0}{cs().activate_encounter_m08B()}

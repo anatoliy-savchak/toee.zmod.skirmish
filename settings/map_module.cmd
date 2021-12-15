@@ -1,0 +1,2 @@
+mklink /j ..\src\zmod_skirmish "D:\Temple\Temple of Elemental Evil.template\modules\zmod_skirmish"
+mklink /j ..\src\zmod_skirmish_core "D:\Temple\Temple of Elemental Evil.template\modules\zmod_skirmish_core"
