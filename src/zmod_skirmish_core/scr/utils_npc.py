@@ -32,10 +32,9 @@ def char_class_get_hit_dice(char_class):
 	d12 = [toee.stat_level_barbarian \
 		, toee.stat_level_dragon_disciple, toee.stat_level_dwarven_defender]
 
-	d10 = [toee.stat_level_fighter, toee.stat_level_paladin, toee.stat_level_ranger \
-		, toee.stat_level_blackguard, toee.stat_level_duelist, toee.stat_level_abjurant_champion, toee.stat_level_swashbuckler]
+	d10 = [toee.stat_level_fighter, toee.stat_level_paladin, toee.stat_level_blackguard, toee.stat_level_duelist, toee.stat_level_abjurant_champion, toee.stat_level_swashbuckler]
 
-	d8 = [toee.stat_level_cleric, toee.stat_level_druid, toee.stat_level_monk \
+	d8 = [toee.stat_level_cleric, toee.stat_level_druid, toee.stat_level_ranger, toee.stat_level_monk \
 		, toee.stat_level_arcane_archer, toee.stat_level_hierophant, toee.stat_level_horizon_walker, toee.stat_level_horizon_walker \
 		, toee.stat_level_shadowdancer, toee.stat_level_favored_soul, toee.stat_level_stormlord, toee.stat_level_scout \
 		, const_toee.stat_level_npc_aristocrat, const_toee.stat_level_npc_warriror]

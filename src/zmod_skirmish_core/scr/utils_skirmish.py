@@ -23,11 +23,17 @@ def menu_get_compatible_creatures_dict():
 		for c in py07710_skirmish_harbinger_monsters.get_character_classes():
 			assert isinstance(c, py07710_skirmish_harbinger_monsters.CtrlSkirmisher)
 			i += 1
-			commander_level = c.get_commander_level()
-			if (commander_level > 0): continue
+			#commander_level = c.get_commander_level()
+			#if (commander_level > 0): continue
 
 			all.append((c, i))
 
+	partyc = []
+	for pc in toee.game.party:
+		c = critter_is_compatible_with_skirmishing(pc)
+		if (c): partyc.append(c.__class__.__name__)
+
+	print(partyc) # debug
 	if (all):
 		commanders = []
 		for pc in toee.game.party:
@@ -37,8 +43,14 @@ def menu_get_compatible_creatures_dict():
 
 		if commanders:
 			for t in all:
-				compatible = 0
 				c = t[0]
+				if (c.get_commander_level() > 0):
+					continue
+					if (c.__name__ in partyc):
+						# do not allow commanders duplicates
+						continue
+
+				compatible = 0
 				for ct in commanders:
 					if critter_ctrl_is_compatible_with_commander(c, ct[1]):
 						compatible = 1
@@ -109,11 +121,7 @@ def menu_creature_place_click(class_id):
 
 	# check if compatible
 	if (1):
-		commanders = []
-		for pc in toee.game.party:
-			ctrl = critter_is_commander(pc)
-			if not ctrl: continue
-			commanders.append((pc, ctrl))
+		commanders = get_party_commanders()
 
 		if commanders:
 			compatible = False
@@ -131,6 +139,14 @@ def menu_creature_place_click(class_id):
 
 	warband_recalc_points()
 	return None # no error
+
+def get_party_commanders():
+	commanders = []
+	for pc in toee.game.party:
+		ctrl = critter_is_commander(pc)
+		if not ctrl: continue
+		commanders.append((pc, ctrl))
+	return commanders
 
 def critter_is_compatible_with_skirmishing(critter): # -> ctrl
 	assert isinstance(critter, toee.PyObjHandle)

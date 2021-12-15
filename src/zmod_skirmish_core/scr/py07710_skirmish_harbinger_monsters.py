@@ -28,6 +28,7 @@ def get_character_classes():
 		, CtrlLGSunSoulInitiate
 		, CtrlLGSwordofHeironeousAsPC
 		, CtrlCGJozanClericOfPelor
+		, CtrlCGArcaneArcherAsPC
 	]
 	return result
 
@@ -46,6 +47,7 @@ def get_enemy_classes():
 		, CtrlLGSunSoulInitiate
 		, CtrlLGSwordofHeironeous
 		, CtrlCGJozanClericOfPelor
+		, CtrlCGArcaneArcher
 	]
 	return result
 
@@ -141,6 +143,7 @@ class CtrlLGClericOfOrder(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.good)
 		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.law)
 
+		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 
 		hairStyle = utils_npc.HairStyle.from_npc(npc)
@@ -215,6 +218,7 @@ class CtrlLGClericOfYondalla(CtrlSkirmisherLG):
 
 		npc.feat_add(toee.feat_martial_weapon_proficiency_short_sword, 1)
 
+		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 
 		hairStyle = utils_npc.HairStyle.from_npc(npc)
@@ -283,6 +287,7 @@ class CtrlLGDwarfAxefighter(CtrlSkirmisherLG):
 		npc.feat_add(toee.feat_weapon_focus_battleaxe, 0)
 		npc.feat_add(toee.feat_cleave, 1)
 
+		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 
 		hairStyle = utils_npc.HairStyle.from_npc(npc)
@@ -341,6 +346,7 @@ class CtrlLGEmberHumanMonk(CtrlSkirmisherLG):
 		npc.feat_add(toee.feat_weapon_finesse_quarterstaff, 0)
 		npc.feat_add(toee.feat_mobility, 1)
 
+		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 
 		hairStyle = utils_npc.HairStyle.from_npc(npc)
@@ -397,6 +403,7 @@ class CtrlLGEvokersApprentice(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
 
+		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 
 		hairStyle = utils_npc.HairStyle.from_npc(npc)
@@ -457,6 +464,7 @@ class CtrlLGHalflingVeteran(CtrlSkirmisherLG):
 		npc.feat_add(toee.feat_weapon_finesse_dagger, 0)
 		npc.feat_add(toee.feat_two_weapon_fighting, 1)
 
+		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 
 		hairStyle = utils_npc.HairStyle.from_npc(npc)
@@ -510,6 +518,7 @@ class CtrlLGHoundArchon(CtrlSkirmisherLG):
 		npc.condition_add_with_args("Spell Resistance", 16)
 		npc.condition_add_with_args("Monster DR Magic", 5)
 
+		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_GREATSWORD, npc))
 
@@ -537,6 +546,7 @@ class CtrlLGHumanCommoner(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
 
+		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 
 		hairStyle = utils_npc.HairStyle.from_npc(npc)
@@ -592,6 +602,7 @@ class CtrlLGLargeEarthElemental(CtrlSkirmisherLG):
 		npc.condition_add("Monster Plant")
 		npc.condition_add_with_args("Monster DR Magic", 5)
 
+		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_GREATSWORD, npc))
 
@@ -619,6 +630,7 @@ class CtrlLGManAtArms(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
 
+		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 
 		hairStyle = utils_npc.HairStyle.from_npc(npc)
@@ -677,6 +689,7 @@ class CtrlLGSunSoulInitiate(CtrlSkirmisherLG):
 		npc.feat_add(toee.feat_weapon_finesse_unarmed_strike_medium_sized_being, 0)
 		npc.feat_add(toee.feat_mobility, 1)
 
+		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 
 		hairStyle = utils_npc.HairStyle.from_npc(npc)
@@ -732,6 +745,7 @@ class CtrlLGSwordofHeironeous(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.good)
 		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.protection)
 
+		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 
 		hairStyle = utils_npc.HairStyle.from_npc(npc)
@@ -806,6 +820,7 @@ class CtrlCGJozanClericOfPelor(CtrlSkirmisherCG):
 		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.healing)
 		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.strength)
 
+		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 
 		hairStyle = utils_npc.HairStyle.from_npc(npc)
@@ -821,6 +836,7 @@ class CtrlCGJozanClericOfPelor(CtrlSkirmisherCG):
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_BLUE, npc))
 
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_MACE_LIGHT, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_SHIELD_SMALL_STEEL_2, npc))
 
 		npc.spells_memorized_forget()
 		npc.spell_memorized_add(toee.spell_command, toee.stat_level_cleric, 1)
@@ -830,3 +846,76 @@ class CtrlCGJozanClericOfPelor(CtrlSkirmisherCG):
 		utils_npc.npc_generate_hp_avg_first(npc)
 		npc.item_wield_best_all()
 		return
+
+
+class CtrlCGArcaneArcher(CtrlSkirmisherCG):
+	# COMMANDER EFFECT: Followers with ranged attacks gain ranged attack +2, Selective Shot 2.	SPECIAL ABILITIES: Precise Shot; 
+	#
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_ELF_WOMAN
+
+	@classmethod
+	def get_price(cls): return 48
+
+	@classmethod
+	def get_title(cls): return "Arcane Archer"
+
+	@classmethod
+	def get_commander_level(cls): return 3
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_ranger, 8)
+		#AC 16 = 10 + 2 leather + 5 dex
+		#SPD 30 (6) should be light armor
+		#HP 10 = 1d8 + 7(d8 + 1)/2 => con: 10
+
+		#STR: 10 due to atk is 8 = 8 bab (lv 8) + 0 str; dmg will be 1d8+2 = 5.5
+		#DEX: 10 due to ranged atk is 15 = 8 bab (lv 8) + 5 dex + 1 wfc + 1 magic; dmg will be 1d8+1 = (2+9)/2=5.5
+		#CON: 10, see HP calculation
+		#INT: 08 any
+		#WIS: 10 any
+		#CHA: 08
+
+		utils_npc.npc_abilities_set(npc, [10, 18, 12, 8, 10, 8]) # elf +2 dex -2 con
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 510) #HUF_0510_b_ranger
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_CORELLON_LARETHIAN)
+		#npc.obj_set_int(toee.obj_f_critter_domain_1, toee.healing)
+		#npc.obj_set_int(toee.obj_f_critter_domain_2, toee.strength)
+
+		npc.feat_add(toee.feat_weapon_focus_longbow, 0)
+		npc.feat_add(toee.feat_point_blank_shot, 0)
+		npc.feat_add(toee.feat_precise_shot, 0)
+		npc.feat_add(toee.feat_rapid_shot, 0)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		npc.d20_send_signal("Rapid Shot Check") # should go after refresh status, as it will be reset
+
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_topknot
+		hairStyle.color = const_toee.hair_color_brown
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_LEATHER_BOOTS_GREEN, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_LEATHER_BROWN, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CAP_LEATHER, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_LEATHER_ARMOR_MASTERWORK, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_GREEN, npc))
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_LONGBOW_PLUS_1, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_ARROW_QUIVER, npc)).obj_set_int(toee.obj_f_ammo_quantity, 100)
+
+		utils_npc.npc_generate_hp_avg_first(npc)
+		npc.item_wield_best_all()
+		return
+
+class CtrlCGArcaneArcherAsPC(CtrlCGArcaneArcher):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_PC_ELF_WOMAN
