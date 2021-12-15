@@ -25,6 +25,7 @@ def get_character_classes():
 		, CtrlLGHumanCommoner
 		, CtrlLGLargeEarthElemental
 		, CtrlLGManAtArms
+		, CtrlLGSunSoulInitiate
 		, CtrlLGSwordofHeironeousAsPC
 	]
 	return result
@@ -41,6 +42,7 @@ def get_enemy_classes():
 		, CtrlLGHumanCommoner
 		, CtrlLGLargeEarthElemental
 		, CtrlLGManAtArms
+		, CtrlLGSunSoulInitiate
 		, CtrlLGSwordofHeironeous
 	]
 	return result
@@ -626,6 +628,58 @@ class CtrlLGManAtArms(CtrlSkirmisherLG):
 
 		npc.feat_add(toee.feat_martial_weapon_proficiency_short_sword, 1)
 		utils_npc.npc_generate_hp_avg_first(npc, 1)
+		npc.item_wield_best_all()
+		return
+
+class CtrlLGSunSoulInitiate(CtrlSkirmisherLG):
+	# SPECIAL ABILITIES: Deflect Arrows (+4 AC against ranged attacks); Mobility (+4 AC against attacks of opportunity); Save +4; Stunning Attack * (DC 13).					
+	#
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_MAN
+
+	@classmethod
+	def get_price(cls): return 8
+
+	@classmethod
+	def get_title(cls): return "Sun Soul Initiate"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_monk, 3)
+		#AC 15 = 10 + 2 wis + 3 dex + 0 monk
+		#SPD 20 (4)
+		#HP 15 = 1d8 + 2d8 + 3*x => 8 + 5*(8+1)/2 + 3*0 = 16 => con: 10
+
+		#STR: 14 due to atk is 3 = 2 bab (lv 3) + 1 str + 1 wf - 2 flurry; dmg will be 1d6 + 2 = 6
+		#DEX: 16 due to AC dex mod = 3
+		#CON: 10, see HP calculation
+		#INT: 08 any
+		#WIS: 14 due to Stunning Attack 13 (10 + 1(1/2 lv) + wis 2)
+		#CHA: 08 any
+
+		utils_npc.npc_abilities_set(npc, [14, 16, 10, 8, 14, 8]) 
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 7880) #NPC_7881_m_Vincent
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
+
+		npc.feat_add(toee.feat_weapon_focus_unarmed_strike_medium_sized_being, 0)
+		npc.feat_add(toee.feat_weapon_finesse_unarmed_strike_medium_sized_being, 0)
+		npc.feat_add(toee.feat_mobility, 1)
+
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_ponytail
+		hairStyle.color = const_toee.hair_color_black
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_MONK, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_ROBES_MONK_BROWN, npc))
+
+		utils_npc.npc_generate_hp_avg_first(npc)
 		npc.item_wield_best_all()
 		return
 
