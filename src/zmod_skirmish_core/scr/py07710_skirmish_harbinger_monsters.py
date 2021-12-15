@@ -29,6 +29,8 @@ def get_character_classes():
 		, CtrlLGSwordofHeironeousAsPC
 		, CtrlCGJozanClericOfPelor
 		, CtrlCGArcaneArcherAsPC
+		, CtrlCGAxeSister
+		, CtrlCGCentaur
 	]
 	return result
 
@@ -48,6 +50,8 @@ def get_enemy_classes():
 		, CtrlLGSwordofHeironeous
 		, CtrlCGJozanClericOfPelor
 		, CtrlCGArcaneArcher
+		, CtrlCGAxeSister
+		, CtrlCGCentaur
 	]
 	return result
 
@@ -847,7 +851,6 @@ class CtrlCGJozanClericOfPelor(CtrlSkirmisherCG):
 		npc.item_wield_best_all()
 		return
 
-
 class CtrlCGArcaneArcher(CtrlSkirmisherCG):
 	# COMMANDER EFFECT: Followers with ranged attacks gain ranged attack +2, Selective Shot 2.	SPECIAL ABILITIES: Precise Shot; 
 	#
@@ -919,3 +922,110 @@ class CtrlCGArcaneArcher(CtrlSkirmisherCG):
 class CtrlCGArcaneArcherAsPC(CtrlCGArcaneArcher):
 	@classmethod
 	def get_proto_id(cls): return const_proto_npc.PROTO_PC_ELF_WOMAN
+
+class CtrlCGAxeSister(CtrlSkirmisherCG):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_WOMAN
+
+	@classmethod
+	def get_price(cls): return 21
+
+	@classmethod
+	def get_title(cls): return "Axe Sister"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_barbarian, 5)
+		#AC 15 = 10 + 4 shirt + 3 dex - 2 rage
+		#SPD 30 (6) should be light armor
+		#HP 40 = 1d12 + 4(d12 + 1)/2 => con: 10
+
+		#STR: 16 (20) due to atk is 10 = 5 bab (lv 5) + 5 str; dmg will be 1d12+7 = 13.5
+		#DEX: 16
+		#CON: 10, see HP calculation
+		#INT: 08 any
+		#WIS: 10 any
+		#CHA: 08
+
+		utils_npc.npc_abilities_set(npc, [16, 16, 10, 8, 10, 8])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 7200) #NPC_7201_m_Mandy, NPC_6751_m_ElfNoblewoman
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_KORD)
+		#npc.obj_set_int(toee.obj_f_critter_domain_1, toee.healing)
+		#npc.obj_set_int(toee.obj_f_critter_domain_2, toee.strength)
+		npc.obj_set_int(toee.obj_f_critter_strategy, 96)
+
+		npc.feat_add(toee.feat_whirlwind_attack, 0)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_ponytail
+		hairStyle.color = const_toee.hair_color_red
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_LEATHER_BOOTS_FINE, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_LEATHER_BROWN, npc))
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CAP_LEATHER, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_CHAIN_SHIRT_MASTERWORK, npc))
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_GREEN, npc))
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_GREATSWORD, npc))
+
+		utils_npc.npc_generate_hp_avg_first(npc)
+		npc.item_wield_best_all()
+		return
+
+class CtrlCGCentaur(CtrlSkirmisherCG):
+	@classmethod
+	def get_proto_id(cls): return 14428
+
+	@classmethod
+	def get_price(cls): return 20
+
+	@classmethod
+	def get_title(cls): return "Centaur"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 4, 8, 0)
+		utils_npc.npc_abilities_set(npc, [18, 14, 14, 8, 13, 11])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 4400)
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		#npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
+		npc.obj_set_int(toee.obj_f_npc_ac_bonus, 3) # natural ac
+		npc.obj_set_int(toee.obj_f_npc_save_fortitude_bonus, 1)
+		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 4)
+		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 4)
+
+		npc.obj_set_int(toee.obj_f_critter_monster_category, const_toee.mc_type_monstrous_humanoid)
+		# bab will be same as HD = 4. this is 1 attack if full action, but we need 2.
+
+		npc.condition_add_with_args("Base_Num_Attack", 2) # should be 2
+
+		npc.feat_add(toee.feat_dodge, 0)
+		npc.feat_add(toee.feat_martial_weapon_proficiency_longsword, 0)
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		#hairStyle = utils_npc.HairStyle.from_npc(npc)
+		#hairStyle.style = const_toee.hair_style_shorthair
+		#hairStyle.color = const_toee.hair_color_black
+		#hairStyle.update_npc(npc)
+
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_LEATHER_BOOTS_BLACK, npc))
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GARB_VILLAGER_GREEN, npc))
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CIRCLET_HOODLESS, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_LONGSWORD, npc))
+
+		utils_npc.npc_generate_hp_avg_first(npc, 0)
+		npc.item_wield_best_all()
+		return

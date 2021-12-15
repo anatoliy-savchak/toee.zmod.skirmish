@@ -222,3 +222,26 @@ stat_level_npc_aristocrat = 85
 stat_level_npc_commoner = 86
 stat_level_npc_expert = 87
 stat_level_npc_warriror = 88
+
+#bab = 3/4 HD
+mc_type_aberration = 0
+mc_type_animal = 1
+mc_type_beast = 2
+mc_type_construct = 3
+mc_type_elemental = 5
+mc_type_giant = 7
+mc_type_humanoid = 8
+mc_type_ooze = 11
+mc_type_plant = 13
+mc_type_shapechanger = 14
+mc_type_vermin = 16
+
+#bab = HD
+mc_type_dragon = 4
+mc_type_magical_beast = 9
+mc_type_monstrous_humanoid = 10
+mc_type_outsider = 12
+
+#bab = HD/2
+mc_type_fey = 6
+mc_type_undead = 15

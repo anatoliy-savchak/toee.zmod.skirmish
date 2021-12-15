@@ -60,6 +60,7 @@ def SkirmisherStart_OnBuildRadialMenuEntry(attachee, args, evt_obj):
 		print '-'*60
 		traceback.print_exc(file=sys.stdout)
 		print '-'*60		
+		debug.breakp("SkirmisherStart_OnBuildRadialMenuEntry")
 	return 0
 
 def SkirmisherStart_OnD20PythonActionCheck(attachee, args, evt_obj):
@@ -101,6 +102,7 @@ def SkirmisherStart_OnD20PythonActionPerform(attachee, args, evt_obj):
 		print '-'*60
 		traceback.print_exc(file=sys.stdout)
 		print '-'*60		
+		debug.breakp("SkirmisherStart_OnD20PythonActionPerform")
 	return 1
 
 

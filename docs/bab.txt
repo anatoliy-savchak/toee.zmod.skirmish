@@ -1,0 +1,22 @@
+bab = 3/4 HD
+{0}{mc_type_aberration}
+{1}{mc_type_animal}
+{2}{mc_type_beast}
+{3}{mc_type_construct}
+{5}{mc_type_elemental}
+{7}{mc_type_giant}
+{8}{mc_type_humanoid}
+{11}{mc_type_ooze}
+{13}{mc_type_plant}
+{14}{mc_type_shapechanger}
+{16}{mc_type_vermin}
+
+bab = HD
+{4}{mc_type_dragon}
+{9}{mc_type_magical_beast}
+{10}{mc_type_monstrous_humanoid}
+{12}{mc_type_outsider}
+
+bab = HD/2
+{6}{mc_type_fey}
+{15}{mc_type_undead}

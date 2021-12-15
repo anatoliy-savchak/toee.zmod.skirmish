@@ -178,7 +178,7 @@ def critter_ctrl_is_compatible_with_commander(critter_ctrl, commander_ctrl):
 	assert isinstance(commander_ctrl, py07710_skirmish_harbinger_monsters.CtrlSkirmisher)
 
 	if (not commander_ctrl.get_alignment_group() in critter_ctrl.get_alignment_groups()):
-		print("commander_ctrl.get_alignment_group() in critter_ctrl.get_alignment_groups()".format(commander_ctrl.get_alignment_group(), critter_ctrl.get_alignment_groups()))
+		print("not commander_ctrl.get_alignment_group() in critter_ctrl.get_alignment_groups(): {}".format(commander_ctrl.get_alignment_group(), critter_ctrl.get_alignment_groups()), critter_ctrl)
 		return False
 	return True
 
