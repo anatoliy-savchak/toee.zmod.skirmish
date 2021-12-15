@@ -27,6 +27,7 @@ def get_character_classes():
 		, CtrlLGManAtArms
 		, CtrlLGSunSoulInitiate
 		, CtrlLGSwordofHeironeousAsPC
+		, CtrlCGJozanClericOfPelor
 	]
 	return result
 
@@ -44,6 +45,7 @@ def get_enemy_classes():
 		, CtrlLGManAtArms
 		, CtrlLGSunSoulInitiate
 		, CtrlLGSwordofHeironeous
+		, CtrlCGJozanClericOfPelor
 	]
 	return result
 
@@ -57,6 +59,9 @@ class CtrlSkirmisher(ctrl_behaviour.CtrlBehaviour):
 
 	@classmethod
 	def get_alignment_group(cls): return toee.ALIGNMENT_NEUTRAL
+
+	@classmethod
+	def get_alignment_groups(cls): return [cls.get_alignment_group()]
 
 	def setup_name(self, npc, title):
 		if (self.get_proto_id() // 1000 == 13):
@@ -87,6 +92,9 @@ class CtrlSkirmisher(ctrl_behaviour.CtrlBehaviour):
 
 	@classmethod
 	def get_title(cls): return None
+
+	@classmethod
+	def is_unique(cls): return False
 
 class CtrlSkirmisherLG(CtrlSkirmisher):
 	@classmethod
@@ -752,3 +760,73 @@ class CtrlLGSwordofHeironeous(CtrlSkirmisherLG):
 class CtrlLGSwordofHeironeousAsPC(CtrlLGSwordofHeironeous):
 	@classmethod
 	def get_proto_id(cls): return const_proto_npc.PROTO_PC_HUMAN_WOMAN
+
+
+class CtrlSkirmisherCG(CtrlSkirmisher):
+	@classmethod
+	def get_alignment_group(cls): return toee.ALIGNMENT_CHAOTIC_GOOD
+
+class CtrlCGJozanClericOfPelor(CtrlSkirmisherCG):
+	# SPECIAL ABILITIES: Unique. Turn Undead 2 *.
+	# SPELLS: 1st-command ** (range 6; Stun; DC 13), CLW *.
+	#
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_MAN
+
+	@classmethod
+	def get_price(cls): return 4
+
+	@classmethod
+	def get_title(cls): return "Jozan, Cleric Of Pelor"
+
+	@classmethod
+	def get_alignment_groups(cls): return [cls.get_alignment_group(), toee.ALIGNMENT_LAWFUL_GOOD]
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_cleric, 1)
+		#AC 16 = 10 + 5 chain mail + 0 dex + 1 light shield
+		#SPD 20 (4) should be med armor
+		#HP 10 = 1d8 + 2 => con: 14
+
+		#STR: 14 due to atk is 2 = 0 bab (lv 1) + 2 str; dmg will be 1d6+2 = 7
+		#DEX: 10 due to AC dex mod = 0
+		#CON: 14, see HP calculation
+		#INT: 08 any
+		#WIS: 14 due to 1st level DC: 13 => 10 + 1 lv + 2 mod wis
+		#CHA: 08 due to Turn undead 2 times = 3 - 1 mod cha
+
+		utils_npc.npc_abilities_set(npc, [14, 10, 14, 8, 14, 8])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 6570) #NPC_6571_m_Jaer
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_PELOR)
+		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.healing)
+		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.strength)
+
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_shorthair
+		hairStyle.color = const_toee.hair_color_brown
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_CHAINMAIL_BOOTS, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_CHAINMAIL_GLOVES, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CAP_LEATHER, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_CHAINMAIL, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_BLUE, npc))
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_MACE_LIGHT, npc))
+
+		npc.spells_memorized_forget()
+		npc.spell_memorized_add(toee.spell_command, toee.stat_level_cleric, 1)
+		npc.spell_memorized_add(toee.spell_cure_light_wounds, toee.stat_level_cleric, 1)
+		npc.spells_pending_to_memorized()
+
+		utils_npc.npc_generate_hp_avg_first(npc)
+		npc.item_wield_best_all()
+		return
