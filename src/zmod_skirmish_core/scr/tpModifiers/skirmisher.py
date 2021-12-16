@@ -20,7 +20,7 @@ def SkirmisherStart_OnBuildRadialMenuEntry(attachee, args, evt_obj):
 		# info
 		if (1):
 			skirmish_settings = utils_skirmish.skirmish_settings_get()
-			info_title = "Info ({}, {}/{})...".format(utils_npc.get_alignment_short(skirmish_settings.faction_alignment), skirmish_settings.points_left, skirmish_settings.points_max)
+			info_title = "Info({},{}/{})".format(utils_npc.get_alignment_short(skirmish_settings.faction_alignment), skirmish_settings.points_left, skirmish_settings.points_max)
 			info = tpdp.RadialMenuEntryPythonAction(info_title, toee.D20A_PYTHON_ACTION, PA_SKIRMISHER, 1, "TAG_INTERFACE_HELP")
 			info_id = info.add_as_child(attachee, root_id)
 

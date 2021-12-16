@@ -31,6 +31,7 @@ def get_character_classes():
 		, CtrlCGArcaneArcherAsPC
 		, CtrlCGAxeSister
 		, CtrlCGCentaur
+		, CtrlCGClericOfCorellonLarethianAsPC
 	]
 	return result
 
@@ -52,6 +53,7 @@ def get_enemy_classes():
 		, CtrlCGArcaneArcher
 		, CtrlCGAxeSister
 		, CtrlCGCentaur
+		, CtrlCGClericOfCorellonLarethian
 	]
 	return result
 
@@ -1033,3 +1035,81 @@ class CtrlCGCentaur(CtrlSkirmisherCG):
 		utils_npc.npc_generate_hp_avg_first(npc, 0)
 		npc.item_wield_best_all()
 		return
+
+class CtrlCGClericOfCorellonLarethian(CtrlSkirmisherCG):
+	# SPECIAL ABILITIES: Unique. Turn Undead 4 *. COMMANDER EFFECT: Elf followers gain Save +4.				
+	#
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_ELF_MAN
+
+	@classmethod
+	def get_price(cls): return 25
+
+	@classmethod
+	def get_title(cls): return "Cleric of Corellon Larethian"
+
+	@classmethod
+	def get_commander_level(cls): return 4
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_cleric, 4)
+		#AC 16 = 10 + 4 chain shirt + 1 dex + 1 light shield
+		#SPD 30 (6) should be light armor
+		#HP 25 = 1d8 + 3d8 + con*3 => con: 12
+
+		#STR: 12 due to atk is 5 = 3 bab (lv 4) + 1 str + 1 wf; dmg will be 1d8+1 = (1+9)/2=5
+		#DEX: 12 due to AC dex mod = 1
+		#CON: 12, see HP calculation
+		#INT: 08 any
+		#WIS: 14 due to level 2 DC: 14
+		#CHA: 12 due to Turn undead 4 times = 3 + 1 mod cha
+
+		utils_npc.npc_abilities_set(npc, [12, 10, 14, 8, 14, 12])# elf +2 dex -2 con
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 1510) #HEM_1510_b_bard
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_CORELLON_LARETHIAN)
+		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.protection)
+		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.war)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_shorthair
+		hairStyle.color = const_toee.hair_color_blue
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_CHAINMAIL_BOOTS, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_CHAINMAIL_GLOVES, npc))
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CAP_LEATHER, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_CHAIN_SHIRT, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_VIOLET, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CIRCLET_HOODLESS, npc))
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_LONGSWORD, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_SHIELD_SMALL_STEEL_2, npc))
+
+		npc.spells_memorized_forget()
+		npc.spell_memorized_add(toee.spell_bless, toee.stat_level_cleric, 1)
+		npc.spell_memorized_add(toee.spell_bless, toee.stat_level_cleric, 1)
+		npc.spell_memorized_add(toee.spell_magic_weapon, toee.stat_level_cleric, 1)
+		npc.spell_memorized_add(toee.spell_magic_weapon, toee.stat_level_cleric, 1)
+
+		npc.spell_memorized_add(toee.spell_hold_person, toee.stat_level_cleric, 2)
+		npc.spell_memorized_add(toee.spell_hold_person, toee.stat_level_cleric, 2)
+		npc.spell_memorized_add(toee.spell_cure_moderate_wounds, toee.stat_level_cleric, 2)
+		npc.spells_pending_to_memorized()
+
+		utils_npc.npc_generate_hp_avg_first(npc)
+		npc.item_wield_best_all()
+		return
+
+
+class CtrlCGClericOfCorellonLarethianAsPC(CtrlCGClericOfCorellonLarethian):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_PC_ELF_MAN
