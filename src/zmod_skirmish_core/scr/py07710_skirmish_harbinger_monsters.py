@@ -32,6 +32,7 @@ def get_character_classes():
 		, CtrlCGAxeSister
 		, CtrlCGCentaur
 		, CtrlCGClericOfCorellonLarethianAsPC
+		, CtrlCGCrestedFelldrake
 	]
 	return result
 
@@ -54,6 +55,7 @@ def get_enemy_classes():
 		, CtrlCGAxeSister
 		, CtrlCGCentaur
 		, CtrlCGClericOfCorellonLarethian
+		, CtrlCGCrestedFelldrake
 	]
 	return result
 
@@ -1113,3 +1115,40 @@ class CtrlCGClericOfCorellonLarethian(CtrlSkirmisherCG):
 class CtrlCGClericOfCorellonLarethianAsPC(CtrlCGClericOfCorellonLarethian):
 	@classmethod
 	def get_proto_id(cls): return const_proto_npc.PROTO_PC_ELF_MAN
+
+class CtrlCGCrestedFelldrake(CtrlSkirmisherCG):
+	@classmethod
+	def get_proto_id(cls): return 14722
+
+	@classmethod
+	def get_price(cls): return 20
+
+	@classmethod
+	def get_title(cls): return "Crested Felldrake"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 2, 12, 0)
+		utils_npc.npc_abilities_set(npc, [11, 10, 15, 6, 12, 9])
+
+		#npc.obj_set_int(toee.obj_f_critter_portrait, 4400) # todo
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		#npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
+		npc.obj_set_int(toee.obj_f_npc_ac_bonus, 4) # natural ac
+		npc.obj_set_int(toee.obj_f_npc_save_fortitude_bonus, 3)
+		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 3)
+		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 3)
+
+		npc.obj_set_int(toee.obj_f_critter_monster_category, const_toee.mc_type_dragon)
+		# bab will be same as HD = 4. 
+
+		npc.condition_add_with_args("Base_Num_Attack", 3) # should be 2
+		npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		utils_npc.npc_generate_hp_avg_first(npc, 0)
+		npc.item_wield_best_all()
+		return
