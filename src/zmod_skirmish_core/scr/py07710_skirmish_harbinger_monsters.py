@@ -35,6 +35,8 @@ def get_character_classes():
 		, CtrlCGCrestedFelldrake
 		, CtrlCGDevisHalfElfBard
 		, CtrlCGElfArcher
+		, CtrlCGElfPyromancer
+		, CtrlCGHumanWanderer
 	]
 	return result
 
@@ -60,6 +62,8 @@ def get_enemy_classes():
 		, CtrlCGCrestedFelldrake
 		, CtrlCGDevisHalfElfBard
 		, CtrlCGElfArcher
+		, CtrlCGElfPyromancer
+		, CtrlCGHumanWanderer
 	]
 	return result
 
@@ -745,11 +749,11 @@ class CtrlLGSwordofHeironeous(CtrlSkirmisherLG):
 		#STR: 14 due to atk is 8 = 5 bab (lv 5) + 2 str + 1 magic; dmg will be 1d8+3 = 11 not 10!
 		#DEX: 10 due to AC dex mod = 0
 		#CON: 12, see HP calculation
-		#WIS: 14
 		#INT: 08 any
+		#WIS: 13
 		#CHA: 10 as Smite Evil +5 = +5 lv + 0 cha
 
-		utils_npc.npc_abilities_set(npc, [14, 10, 12, 14, 8, 10])
+		utils_npc.npc_abilities_set(npc, [14, 10, 12, 8, 13, 10])
 
 		npc.obj_set_int(toee.obj_f_critter_portrait, 580) #HUF_0580_b_paladin
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
@@ -1208,9 +1212,9 @@ class CtrlCGDevisHalfElfBard(CtrlSkirmisherCG):
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTSWORD, npc))
 
 		npc.spells_memorized_forget()
-		npc.spell_memorized_add(toee.spell_cure_light_wounds, toee.stat_level_bard, 1)
-		npc.spell_memorized_add(toee.spell_cure_light_wounds, toee.stat_level_bard, 1)
-		npc.spell_memorized_add(toee.spell_lesser_confusion, toee.stat_level_bard, 1)
+		npc.spell_known_add(toee.spell_cure_light_wounds, toee.stat_level_bard, 1)
+		#npc.spell_known_add(toee.spell_cure_light_wounds, toee.stat_level_bard, 1)
+		npc.spell_known_add(toee.spell_lesser_confusion, toee.stat_level_bard, 1)
 		npc.spells_pending_to_memorized()
 
 		utils_npc.npc_generate_hp_avg_first(npc)
@@ -1278,5 +1282,129 @@ class CtrlCGElfArcher(CtrlSkirmisherCG):
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTSWORD, npc))
 
 		utils_npc.npc_generate_hp_avg_first(npc)
+		npc.item_wield_best_all()
+		return
+
+class CtrlCGElfPyromancer(CtrlSkirmisherCG):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_ELF_WOMAN
+
+	@classmethod
+	def get_price(cls): return 32
+
+	@classmethod
+	def get_title(cls): return "Elf Pyromancer"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_wizard, 6)
+		#AC 16 = 10 + 3 dex
+		#SPD 30 (6)
+		#HP 20 = 1d4 + 5d4 + x => con: 12
+
+		#STR: 10 atk 3
+		#DEX: 16 due to AC dex mod = 3
+		#CON: 12, see HP calculation
+		#INT: 14
+		#WIS: 12 
+		#CHA: 14
+
+		utils_npc.npc_abilities_set(npc, [10, 14, 14, 14, 10, 8]) # elf +2 dex -2 con
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 1110) #ELF_1110_b_adamo
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_BOCCOB)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_longhair
+		hairStyle.color = const_toee.hair_color_blonde
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_LEATHER_BOOTS_WHITE, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_ROBES_GREEN, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CIRCLET_HOODLESS, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_LONGSWORD, npc))
+
+		npc.spells_memorized_forget()
+		npc.spell_memorized_add(toee.spell_magic_missile, toee.stat_level_wizard, 1)
+		npc.spell_memorized_add(toee.spell_magic_missile, toee.stat_level_wizard, 1)
+		npc.spell_memorized_add(toee.spell_magic_missile, toee.stat_level_wizard, 1)
+
+		npc.spell_memorized_add(toee.spell_resist_elements, toee.stat_level_wizard, 2)
+		npc.spell_memorized_add(toee.spell_scorching_ray, toee.stat_level_wizard, 2)
+		npc.spell_memorized_add(toee.spell_scorching_ray, toee.stat_level_wizard, 2)
+
+		npc.spell_memorized_add(toee.spell_fireball, toee.stat_level_wizard, 3)
+		npc.spell_memorized_add(toee.spell_protection_from_elements, toee.stat_level_wizard, 3)
+
+		npc.spells_pending_to_memorized()
+
+		utils_npc.npc_generate_hp_avg_first(npc)
+		npc.item_wield_best_all()
+		return
+
+class CtrlCGHumanWanderer(CtrlSkirmisherCG):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_MAN
+
+	@classmethod
+	def get_price(cls): return 13
+
+	@classmethod
+	def get_title(cls): return "Human Wanderer"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_ranger, 3)
+		#AC 16 = 10 + 2 dex + 3 st leather
+		#SPD 30 (6)
+		#HP 20 = ...
+
+		#STR: 10 atk 4 = 3 bab + 2 str + 1 wf - 2 twf
+		#DEX: 15 due to AC dex mod = 3
+		#CON: 12, see HP calculation
+		#INT: 8
+		#WIS: 10 
+		#CHA: 8
+
+		utils_npc.npc_abilities_set(npc, [14, 14, 12, 8, 10, 8])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 7870) #NPC_7871_m_SkoleGoon
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_KORD)
+
+		npc.feat_add(toee.feat_two_weapon_fighting_ranger, 0)
+		npc.feat_add(toee.feat_weapon_focus_short_sword, 0)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_shorthair
+		hairStyle.color = const_toee.hair_color_black
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_LEATHER_BOOTS_GREEN, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_LEATHER_BROWN, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CIRCLET_HOODLESS, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_ORANGE, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_STUDDED_LEATHER_ARMOR, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTSWORD, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTSWORD, npc))
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTBOW, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_ARROW_QUIVER, npc)).obj_set_int(toee.obj_f_ammo_quantity, 100)
+
+		utils_npc.npc_generate_hp_avg_first(npc, 1)
 		npc.item_wield_best_all()
 		return
