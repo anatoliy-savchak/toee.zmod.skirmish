@@ -1009,6 +1009,8 @@ class CtrlCGCentaur(CtrlSkirmisherCG):
 		# bab will be same as HD = 4. this is 1 attack if full action, but we need 2.
 
 		npc.condition_add_with_args("Base_Num_Attack", 2) # should be 2
+		npc.condition_add_with_args("Enlarged_Weapons", 1) # should be larger
+		npc.condition_add_with_args("Base_Movement", 0, 166) # should be 50 ft
 
 		npc.feat_add(toee.feat_dodge, 0)
 		npc.feat_add(toee.feat_martial_weapon_proficiency_longsword, 0)
@@ -1025,6 +1027,8 @@ class CtrlCGCentaur(CtrlSkirmisherCG):
 		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CIRCLET_HOODLESS, npc))
 		
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_LONGSWORD, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_LONGBOW_COMPOSITE_16, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_ARROW_QUIVER, npc)).obj_set_int(toee.obj_f_ammo_quantity, 100)
 
 		utils_npc.npc_generate_hp_avg_first(npc, 0)
 		npc.item_wield_best_all()

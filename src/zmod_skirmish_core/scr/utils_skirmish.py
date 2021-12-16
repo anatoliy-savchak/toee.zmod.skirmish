@@ -282,12 +282,15 @@ def menu_show_info_click():
 		for pc in toee.game.party:
 			ctrl = critter_is_compatible_with_skirmishing(pc)
 			if not ctrl: continue
-			line = "{}, {}. Cost: {}".format(ctrl.get_title(), utils_npc.get_alignment_short(ctrl.get_alignment_group()), ctrl.get_price())
+			commander_level = ctrl.get_commander_level()
+			cmdr = " (Cmdr {})".format(commander_level) if (commander_level > 0) else ""
+			line = "{}{}, {}. Cost: {}".format(ctrl.get_title(), cmdr, utils_npc.get_alignment_short(ctrl.get_alignment_group()), ctrl.get_price())
 			creatures.append((line, ctrl.get_price()))
 
 		if (creatures):
 			i = 0
-			for critter_tup in sorted(critters, reverse = False, key = lambda kv: kv[1]):
+			for critter_tup in sorted(creatures, reverse = False, key = lambda kv: kv[1]):
+				i += 1
 				lines.append("{}. {}".format(i, critter_tup[0]))
 
 	result = "\n".join(lines)
