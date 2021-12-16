@@ -34,6 +34,7 @@ def get_character_classes():
 		, CtrlCGClericOfCorellonLarethianAsPC
 		, CtrlCGCrestedFelldrake
 		, CtrlCGDevisHalfElfBard
+		, CtrlCGElfArcher
 	]
 	return result
 
@@ -58,6 +59,7 @@ def get_enemy_classes():
 		, CtrlCGClericOfCorellonLarethian
 		, CtrlCGCrestedFelldrake
 		, CtrlCGDevisHalfElfBard
+		, CtrlCGElfArcher
 	]
 	return result
 
@@ -907,13 +909,14 @@ class CtrlCGArcaneArcher(CtrlSkirmisherCG):
 		self.setup_name(npc, self.get_title())
 
 		hairStyle = utils_npc.HairStyle.from_npc(npc)
-		hairStyle.style = const_toee.hair_style_topknot
-		hairStyle.color = const_toee.hair_color_brown
+		hairStyle.style = const_toee.hair_style_ponytail
+		hairStyle.color = const_toee.hair_color_blonde
 		hairStyle.update_npc(npc)
 
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_LEATHER_BOOTS_GREEN, npc))
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_LEATHER_BROWN, npc))
-		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CAP_LEATHER, npc))
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CAP_LEATHER, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CIRCLET_HOODLESS, npc))
 		
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_LEATHER_ARMOR_MASTERWORK, npc))
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_GREEN, npc))
@@ -1209,6 +1212,70 @@ class CtrlCGDevisHalfElfBard(CtrlSkirmisherCG):
 		npc.spell_memorized_add(toee.spell_cure_light_wounds, toee.stat_level_bard, 1)
 		npc.spell_memorized_add(toee.spell_lesser_confusion, toee.stat_level_bard, 1)
 		npc.spells_pending_to_memorized()
+
+		utils_npc.npc_generate_hp_avg_first(npc)
+		npc.item_wield_best_all()
+		return
+
+class CtrlCGElfArcher(CtrlSkirmisherCG):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_ELF_MAN
+
+	@classmethod
+	def get_price(cls): return 10
+
+	@classmethod
+	def get_title(cls): return "Elf Archer"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_ranger, 1)
+		#AC 15 = 10 + 2 leather + 3 dex
+		#SPD 30 (6) should be light armor
+		#HP 10 = 1d8 + x => con: 14
+
+		#STR: 12 due to atk is 2 = 1 bab (lv 1) + 1 str; dmg will be 1d6+1 = 4.5
+		#DEX: 16 due to ranged atk is 6 = 1 bab (lv 1) + 3 dex + 1 mkw; dmg will be 1d6+1 = (2+7)/2=4.5
+		#CON: 14, see HP calculation
+		#INT: 08 any
+		#WIS: 10 any
+		#CHA: 08
+
+		utils_npc.npc_abilities_set(npc, [12, 14, 16, 8, 10, 8]) # elf +2 dex -2 con
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 1040) #ELM_1040_b_ranger
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_CORELLON_LARETHIAN)
+		#npc.obj_set_int(toee.obj_f_critter_domain_1, toee.healing)
+		#npc.obj_set_int(toee.obj_f_critter_domain_2, toee.strength)
+
+		npc.feat_add(toee.feat_weapon_focus_shortbow, 0)
+		npc.feat_add(toee.feat_point_blank_shot, 0)
+		npc.feat_add(toee.feat_precise_shot, 0)
+		npc.feat_add(toee.feat_rapid_shot, 0)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		npc.d20_send_signal("Rapid Shot Check") # should go after refresh status, as it will be reset
+
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_topknot
+		hairStyle.color = const_toee.hair_color_brown
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_LEATHER_BOOTS_GREEN, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_LEATHER_BROWN, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CAP_LEATHER, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_LEATHER_ARMOR_MASTERWORK, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_GREEN, npc))
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTBOW_MASTERWORK, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_ARROW_QUIVER, npc)).obj_set_int(toee.obj_f_ammo_quantity, 100)
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTSWORD, npc))
 
 		utils_npc.npc_generate_hp_avg_first(npc)
 		npc.item_wield_best_all()
