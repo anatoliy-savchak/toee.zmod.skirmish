@@ -40,6 +40,7 @@ def get_character_classes():
 		, CtrlCGKruskHalfOrcBarbarian
 		, CtrlCGLiddaHalflingRogue
 		, CtrlLGNebinGnomeIllusionist
+		, CtrlCGVadaniaHalfElfDruidAsPC
 	]
 	return result
 
@@ -70,6 +71,7 @@ def get_enemy_classes():
 		, CtrlCGKruskHalfOrcBarbarian
 		, CtrlCGLiddaHalflingRogue
 		, CtrlLGNebinGnomeIllusionist
+		, CtrlCGVadaniaHalfElfDruid
 	]
 	return result
 
@@ -1586,3 +1588,72 @@ class CtrlLGNebinGnomeIllusionist(CtrlSkirmisherCG):
 		utils_npc.npc_generate_hp_avg_first(npc)
 		npc.item_wield_best_all()
 		return
+
+class CtrlCGVadaniaHalfElfDruid(CtrlSkirmisherCG):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_HALFELF_WOMAN
+
+	@classmethod
+	def get_price(cls): return 22
+
+	@classmethod
+	def get_title(cls): return "Vadania, Half-Elf Druid"
+
+	@classmethod
+	def get_commander_level(cls): return 2
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_druid, 3)
+		#AC 18 = 10 + 5 breastplate + 2 shield + 1 dex
+		#HP 20 = 1d8 + 2d8 + 3x => 8 + 9 + 3x = con: 12
+
+		#STR: 14 atk 4 = 2 bab + 2 str
+		#DEX: 12 due to AC dex mod = 1
+		#CON: 12, see HP calculation
+		#INT: 14 wiz
+		#WIS: 12 
+		#CHA: 8 any
+
+		utils_npc.npc_abilities_set(npc, [14, 12, 12, 14, 12, 8])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 760) #HUF_0760_b_adamo
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_braids
+		hairStyle.color = const_toee.hair_color_pink
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_LEATHER_BROWN, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CIRCLET_HOODLESS, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_VIOLET, npc))
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_BREASTPLATE_LAMELLAR, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_SHIELD_LARGE_ELVISH, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_SCIMITAR, npc))
+
+		npc.spells_memorized_forget()
+		npc.spell_memorized_add(toee.spell_magic_fang, toee.stat_level_druid, 1)
+		npc.spell_memorized_add(toee.spell_magic_fang, toee.stat_level_druid, 1)
+		npc.spell_memorized_add(toee.spell_produce_flame, toee.stat_level_druid, 1)
+
+		npc.spell_memorized_add(toee.spell_cats_grace, toee.stat_level_druid, 2)
+		npc.spell_memorized_add(toee.spell_cats_grace, toee.stat_level_druid, 2)
+		#npc.spell_memorized_add(toee.spell_flame_blade, toee.stat_level_druid, 2)
+		npc.spells_pending_to_memorized()
+
+		utils_npc.npc_generate_hp_avg_first(npc)
+		npc.item_wield_best_all()
+		return
+
+class CtrlCGVadaniaHalfElfDruidAsPC(CtrlCGVadaniaHalfElfDruid):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_PC_HALFELF_WOMAN
