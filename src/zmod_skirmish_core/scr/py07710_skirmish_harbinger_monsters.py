@@ -41,6 +41,7 @@ def get_character_classes():
 		, CtrlCGLiddaHalflingRogue
 		, CtrlLGNebinGnomeIllusionist
 		, CtrlCGVadaniaHalfElfDruidAsPC
+		, CtrlCGWildElfBarbarian
 	]
 	return result
 
@@ -72,6 +73,7 @@ def get_enemy_classes():
 		, CtrlCGLiddaHalflingRogue
 		, CtrlLGNebinGnomeIllusionist
 		, CtrlCGVadaniaHalfElfDruid
+		, CtrlCGWildElfBarbarian
 	]
 	return result
 
@@ -1657,3 +1659,59 @@ class CtrlCGVadaniaHalfElfDruid(CtrlSkirmisherCG):
 class CtrlCGVadaniaHalfElfDruidAsPC(CtrlCGVadaniaHalfElfDruid):
 	@classmethod
 	def get_proto_id(cls): return const_proto_npc.PROTO_PC_HALFELF_WOMAN
+
+class CtrlCGWildElfBarbarian(CtrlSkirmisherCG):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_ELF_MAN
+
+	@classmethod
+	def get_price(cls): return 13
+
+	@classmethod
+	def get_title(cls): return "Wild Elf Barbarian"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_barbarian, 2)
+		#AC 12 = 10 + 1 dex + 3 barb - 2 rage
+		#SPD 30 (6)
+		#HP 25 = 4 rage + 1d12 {=18} + 1d12 {7+18=25}
+
+		#STR: 12 atk 6 = 2 bab + 1 str + 2 str rage + 1 wf, 1d6+3: 4<->9 =>16.5
+		#DEX: 12 due to AC dex mod = 1
+		#CON: 12, see HP calculation
+		#INT: 6
+		#WIS: 12
+		#CHA: 8
+
+		utils_npc.npc_abilities_set(npc, [12, 12, 12, 8, 12, 8]) # race_wild_elf
+		npc.obj_set_int(toee.obj_f_critter_race, toee.race_wild_elf)
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 1080) #ELM_1080_b_adamo
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_CORELLON_LARETHIAN)
+
+		npc.feat_add(toee.feat_weapon_focus_handaxe, 0)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_mohawk
+		hairStyle.color = const_toee.hair_color_red
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_LEATHER_BOOTS_COMBAT, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_HELM_BARBARIAN, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_STUDDED_LEATHER_ARMOR_MASTERWORK_BARBARIAN, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_HANDAXE, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_LONGBOW, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_ARROW_QUIVER, npc)).obj_set_int(toee.obj_f_ammo_quantity, 100)
+
+		utils_npc.npc_generate_hp_avg_first(npc, 1)
+		npc.item_wield_best_all()
+		return
