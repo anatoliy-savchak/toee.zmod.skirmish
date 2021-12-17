@@ -1150,9 +1150,15 @@ class CtrlCGCrestedFelldrake(CtrlSkirmisherCG):
 		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 3)
 
 		npc.obj_set_int(toee.obj_f_critter_monster_category, const_toee.mc_type_dragon)
-		# bab will be same as HD = 4. 
+		# bab will be same as HD = 2. But it wont work in actual attacks for monsters...
 
-		npc.condition_add_with_args("Base_Num_Attack", 3) # should be 2
+		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_bite)
+		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 2)
+		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 1)
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d8").packed)
+
+
+		#npc.condition_add_with_args("Base_Num_Attack", 3) # should be 2
 		npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
 
 		npc.feat_add(toee.feat_alertness, 1)

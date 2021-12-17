@@ -245,3 +245,12 @@ mc_type_outsider = 12
 #bab = HD/2
 mc_type_fey = 6
 mc_type_undead = 15
+
+# natural weapon type, PHB p. 312
+nwt_bite = 0
+nwt_claw = 1
+nwt_rake = 2
+nwt_gore = 3
+nwt_slap = 4
+nwt_slam = 5
+nwt_sting = 6
