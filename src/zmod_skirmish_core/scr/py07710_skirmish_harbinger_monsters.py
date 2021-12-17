@@ -39,6 +39,7 @@ def get_character_classes():
 		, CtrlCGHumanWanderer
 		, CtrlCGKruskHalfOrcBarbarian
 		, CtrlCGLiddaHalflingRogue
+		, CtrlLGNebinGnomeIllusionist
 	]
 	return result
 
@@ -68,6 +69,7 @@ def get_enemy_classes():
 		, CtrlCGHumanWanderer
 		, CtrlCGKruskHalfOrcBarbarian
 		, CtrlCGLiddaHalflingRogue
+		, CtrlLGNebinGnomeIllusionist
 	]
 	return result
 
@@ -1520,6 +1522,66 @@ class CtrlCGLiddaHalflingRogue(CtrlSkirmisherCG):
 		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_CROSSBOW_LIGHT, npc)))
 		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_BOLT_QUIVER, npc))).obj_set_int(toee.obj_f_ammo_quantity, 100)
 		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTSWORD, npc)))
+
+		utils_npc.npc_generate_hp_avg_first(npc)
+		npc.item_wield_best_all()
+		return
+
+class CtrlLGNebinGnomeIllusionist(CtrlSkirmisherCG):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_GNOME_MAN
+
+	@classmethod
+	def get_price(cls): return 18
+
+	@classmethod
+	def get_title(cls): return "Nebin, Gnome Illusionist"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_wizard, 4)
+		#AC 12 = 10 + 1 dex + 4 br
+		#HP 20 = 1d4 + 3d4 + 4x => 4 + 8 + 4x = con: 14
+
+		#STR: 10 atk 0
+		#DEX: 12 due to AC dex mod = 1
+		#CON: 14, see HP calculation
+		#INT: 14 wiz
+		#WIS: 12 
+		#CHA: 8 any
+
+		utils_npc.npc_abilities_set(npc, [12, 12, 12, 14, 12, 8]) # -2 STR, +2 CON
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 640) #HUM_0640_b_cabral
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_shorthair
+		hairStyle.color = const_toee.hair_color_black
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_LEATHER_BOOTS_WHITE, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_ROBES_BROWN_TEMPLE_EARTH, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CIRCLET_HOODLESS, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_wondrous.PROTO_WONDROUS_BRACERS_OF_ARMOR_PLUS_4, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_CLUB, npc))
+
+		npc.spells_memorized_forget()
+		npc.spell_memorized_add(toee.spell_color_spray, toee.stat_level_wizard, 1)
+		npc.spell_memorized_add(toee.spell_color_spray, toee.stat_level_wizard, 1)
+		npc.spell_memorized_add(toee.spell_magic_weapon, toee.stat_level_wizard, 1)
+
+		npc.spell_memorized_add(toee.spell_blur, toee.stat_level_wizard, 2)
+		npc.spell_memorized_add(toee.spell_blur, toee.stat_level_wizard, 2)
+		npc.spell_memorized_add(toee.spell_melfs_acid_arrow, toee.stat_level_wizard, 2)
+		npc.spells_pending_to_memorized()
 
 		utils_npc.npc_generate_hp_avg_first(npc)
 		npc.item_wield_best_all()
