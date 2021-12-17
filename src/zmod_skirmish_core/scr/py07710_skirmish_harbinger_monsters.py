@@ -42,6 +42,7 @@ def get_character_classes():
 		, CtrlLGNebinGnomeIllusionist
 		, CtrlCGVadaniaHalfElfDruidAsPC
 		, CtrlCGWildElfBarbarian
+		, CtrlCGWoodElfSkirmisher
 	]
 	return result
 
@@ -74,6 +75,7 @@ def get_enemy_classes():
 		, CtrlLGNebinGnomeIllusionist
 		, CtrlCGVadaniaHalfElfDruid
 		, CtrlCGWildElfBarbarian
+		, CtrlCGWoodElfSkirmisher
 	]
 	return result
 
@@ -1710,6 +1712,65 @@ class CtrlCGWildElfBarbarian(CtrlSkirmisherCG):
 		
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_HANDAXE, npc))
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_LONGBOW, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_ARROW_QUIVER, npc)).obj_set_int(toee.obj_f_ammo_quantity, 100)
+
+		utils_npc.npc_generate_hp_avg_first(npc, 1)
+		npc.item_wield_best_all()
+		return
+
+class CtrlCGWoodElfSkirmisher(CtrlSkirmisherCG):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_ELF_WOMAN
+
+	@classmethod
+	def get_price(cls): return 18
+
+	@classmethod
+	def get_title(cls): return "Wood Elf Skirmisher"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_ranger, 3)
+		#AC 13 = 10 + 3 dex
+		#SPD 30 (6)
+		#HP 20 = 1d8 {=8} + 2d8 {9+8=17}
+
+		#STR: 14 atk 5 = 3 bab + 2 str, 1d6+2: 3<->8 =>5.5
+		#DEX: 16 due to AC dex mod = 3
+		#CON: 12, see HP calculation
+		#INT: 10
+		#WIS: 12
+		#CHA: 8
+
+		utils_npc.npc_abilities_set(npc, [10, 14, 10, 10, 12, 8]) # race_wood_elf
+		npc.obj_set_int(toee.obj_f_critter_race, toee.race_wood_elf)
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 2560) #HAF_2560_b_adamo
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_CORELLON_LARETHIAN)
+
+		npc.feat_add(toee.feat_weapon_focus_longbow, 0)
+		npc.feat_add(toee.feat_point_blank_shot, 0)
+		npc.feat_add(toee.feat_precise_shot, 0)
+		npc.feat_add(toee.feat_rapid_shot, 0)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		npc.d20_send_signal("Rapid Shot Check") # should go after refresh status, as it will be reset
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_longhair
+		hairStyle.color = const_toee.hair_color_brown
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_PADDED_RED, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_MONK_OUTFIT, npc))
+		
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_HANDAXE, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_LONGBOW_MASTERWORK, npc))
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_ARROW_QUIVER, npc)).obj_set_int(toee.obj_f_ammo_quantity, 100)
 
 		utils_npc.npc_generate_hp_avg_first(npc, 1)
