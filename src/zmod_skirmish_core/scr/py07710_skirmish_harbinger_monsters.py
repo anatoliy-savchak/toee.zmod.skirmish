@@ -38,6 +38,7 @@ def get_character_classes():
 		, CtrlCGElfPyromancer
 		, CtrlCGHumanWanderer
 		, CtrlCGKruskHalfOrcBarbarian
+		, CtrlCGLiddaHalflingRogue
 	]
 	return result
 
@@ -66,6 +67,7 @@ def get_enemy_classes():
 		, CtrlCGElfPyromancer
 		, CtrlCGHumanWanderer
 		, CtrlCGKruskHalfOrcBarbarian
+		, CtrlCGLiddaHalflingRogue
 	]
 	return result
 
@@ -472,7 +474,7 @@ class CtrlLGHalflingVeteran(CtrlSkirmisherLG):
 
 		utils_npc.npc_abilities_set(npc, [14, 16, 12, 8, 10, 8]) # -2 STR, +2 DEX
 
-		npc.obj_set_int(toee.obj_f_critter_portrait, 2500) #HAM_2500_b_rogue
+		npc.obj_set_int(toee.obj_f_critter_portrait, 2520) #HAM_2520_b_cabral
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
 
@@ -1265,8 +1267,8 @@ class CtrlCGElfArcher(CtrlSkirmisherCG):
 
 		npc.feat_add(toee.feat_weapon_focus_shortbow, 0)
 		npc.feat_add(toee.feat_point_blank_shot, 0)
-		npc.feat_add(toee.feat_precise_shot, 0)
-		npc.feat_add(toee.feat_rapid_shot, 0)
+		#npc.feat_add(toee.feat_precise_shot, 0)
+		#npc.feat_add(toee.feat_rapid_shot, 0)
 
 		npc.feat_add(toee.feat_alertness, 1)
 		npc.d20_send_signal("Rapid Shot Check") # should go after refresh status, as it will be reset
@@ -1417,7 +1419,6 @@ class CtrlCGHumanWanderer(CtrlSkirmisherCG):
 		npc.item_wield_best_all()
 		return
 
-
 class CtrlCGKruskHalfOrcBarbarian(CtrlSkirmisherCG):
 	@classmethod
 	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_HALFORC_MAN
@@ -1468,5 +1469,58 @@ class CtrlCGKruskHalfOrcBarbarian(CtrlSkirmisherCG):
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_GREATAXE, npc))
 
 		utils_npc.npc_generate_hp_avg_first(npc, 1)
+		npc.item_wield_best_all()
+		return
+
+class CtrlCGLiddaHalflingRogue(CtrlSkirmisherCG):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_HALFLING_WOMAN
+
+	@classmethod
+	def get_price(cls): return 4
+
+	@classmethod
+	def get_title(cls): return "Lidda, Halfling Rogue"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_rogue, 1)
+		#AC 16 = 10 + 2 leather + 3 dex + small
+		#SPD 20 (4)
+		#HP 5 = 1d6-1
+
+		#STR: 10 due to atk is 1 = 0 bab + 1 small
+		#DEX: 16 due to AC dex mod = 3
+		#CON: 8, see HP calculation
+		#INT: 08 any
+		#WIS: 10
+		#CHA: 08 any
+
+		utils_npc.npc_abilities_set(npc, [12, 14, 8, 8, 10, 8]) # -2 STR, +2 DEX
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 2500) #HAM_2500_b_rogu
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_ponytail
+		hairStyle.color = const_toee.hair_color_black
+		hairStyle.update_npc(npc)
+
+		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_LEATHER_BOOTS_GREEN, npc)))
+		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_LEATHER_BROWN, npc)))
+		#self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_HELMET_CHAIN, npc)))
+		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_LEATHER_ARMOR_TAN, npc)))
+
+		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_CROSSBOW_LIGHT, npc)))
+		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_BOLT_QUIVER, npc))).obj_set_int(toee.obj_f_ammo_quantity, 100)
+		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTSWORD, npc)))
+
+		utils_npc.npc_generate_hp_avg_first(npc)
 		npc.item_wield_best_all()
 		return
