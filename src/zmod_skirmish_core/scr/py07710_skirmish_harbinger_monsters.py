@@ -37,6 +37,7 @@ def get_character_classes():
 		, CtrlCGElfArcher
 		, CtrlCGElfPyromancer
 		, CtrlCGHumanWanderer
+		, CtrlCGKruskHalfOrcBarbarian
 	]
 	return result
 
@@ -64,6 +65,7 @@ def get_enemy_classes():
 		, CtrlCGElfArcher
 		, CtrlCGElfPyromancer
 		, CtrlCGHumanWanderer
+		, CtrlCGKruskHalfOrcBarbarian
 	]
 	return result
 
@@ -1410,6 +1412,60 @@ class CtrlCGHumanWanderer(CtrlSkirmisherCG):
 
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTBOW, npc))
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_ARROW_QUIVER, npc)).obj_set_int(toee.obj_f_ammo_quantity, 100)
+
+		utils_npc.npc_generate_hp_avg_first(npc, 1)
+		npc.item_wield_best_all()
+		return
+
+
+class CtrlCGKruskHalfOrcBarbarian(CtrlSkirmisherCG):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_HALFORC_MAN
+
+	@classmethod
+	def get_price(cls): return 16
+
+	@classmethod
+	def get_title(cls): return "Krusk, Half-Orc Barbarian"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_barbarian, 3)
+		#AC 14 = 10 + 3 dex + 3 st leather - 2 rage
+		#SPD 30 (6)
+		#HP 35 = 6 rage + 1d12 {=18} + 2d12 {13+18=31} + 1con x 3 {31+3=34}
+
+		#STR: 18 atk 10 = 3 bab + 4 str + 2 str rage + 1 wf, 1d12+9: 10<->21 =>15.5
+		#DEX: 16 due to AC dex mod = 3
+		#CON: 12, see HP calculation
+		#INT: 6
+		#WIS: 12
+		#CHA: 8
+
+		utils_npc.npc_abilities_set(npc, [16, 16, 12, 8, 12, 8])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 3080) #HOM_3080_b_cabral
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_KORD)
+
+		npc.feat_add(toee.feat_weapon_focus_greataxe, 0)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_mohawk
+		hairStyle.color = const_toee.hair_color_red
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_LEATHER_BOOTS_COMBAT, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_HELM_BARBARIAN, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_STUDDED_LEATHER_ARMOR_MASTERWORK_BARBARIAN, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_GREATAXE, npc))
 
 		utils_npc.npc_generate_hp_avg_first(npc, 1)
 		npc.item_wield_best_all()
