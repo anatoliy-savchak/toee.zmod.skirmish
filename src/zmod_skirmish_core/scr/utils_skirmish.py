@@ -299,7 +299,7 @@ def menu_show_info_click():
 
 def menu_map_start_click(map_id):
 	assert isinstance(map_id, int)
-	toee.game.fade_and_teleport(0, 0, 0, map_id, 495, 506)
+	toee.game.fade_and_teleport(60*60*24, 0, 0, map_id, 495, 506)
 	return
 
 def generate_enemies1(points, alignment_group):

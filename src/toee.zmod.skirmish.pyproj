@@ -200,6 +200,7 @@
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\bonus_ac.py" />
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\base_num_attack.py" />
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\debug_info.py" />
+    <Compile Include="zmod_skirmish_core\scr\tpModifiers\extra_stunning.py" />
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\rapid_shot.py" />
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\skirmisher.py" />
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\monster_incorporeal2.py" />

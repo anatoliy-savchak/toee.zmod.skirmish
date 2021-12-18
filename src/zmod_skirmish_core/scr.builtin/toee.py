@@ -216,8 +216,10 @@ class PyObjHandle(object):
 		#npc.cast_spell(int[spell_aid...]: spellEnum|, PyObjHandle: targetObj) -> None
 		return
 
-	def d20_send_signal(self, signalId, obj):
-		"""Send d20 signal. npc.d20_send_signal(int[DK_SIG_HP_Changed+signalId]: signalId, PyObjHandle: obj)"""
+	def d20_send_signal(self, signalId, arg1, arg2):
+		"""Send d20 signal. npc.d20_send_signal(int[DK_SIG_HP_Changed+signalId]: signalId, PyObjHandle: obj) 
+		Send d20 signal. npc.d20_send_signal(int[DK_SIG_HP_Changed+signalId]: signalId, int: arg1, int: arg2) 
+		or Send Python signal. npc.d20_send_signal(str: signal, int: arg1, int: arg2) """
 		return
 
 	def d20_query(self, key):
