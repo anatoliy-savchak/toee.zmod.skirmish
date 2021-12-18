@@ -196,6 +196,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\ability_check_modifier_attacker.py" />
+    <Compile Include="zmod_skirmish_core\scr\tpModifiers\monster_displacement.py" />
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\enlarged_weapons.py" />
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\bonus_ac.py" />
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\base_num_attack.py" />

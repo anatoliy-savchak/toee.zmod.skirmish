@@ -1,0 +1,310 @@
+skeleton "abjuration_casting.mae"
+
+{	
+	quality 0.001
+
+}
+
+
+
+
+animation "unarmed_unarmed_rturn" "unarmed_unarmed_rturn.mae"
+{
+	loopable
+	event 6  "script" "anim_obj.footstep()"
+	event 15  "script" "anim_obj.footstep()"
+	event 16 "script" "anim_obj.footstep()"
+	event 24 "script" "anim_obj.footstep()"
+	event 33 "script" "anim_obj.footstep()"
+	angle 180
+}
+
+animation "unarmed_unarmed_lturn" "unarmed_unarmed_lturn.mae"
+{
+	loopable
+	event 6  "script" "anim_obj.footstep()"
+	event 15  "script" "anim_obj.footstep()"
+	event 16 "script" "anim_obj.footstep()"
+	event 24 "script" "anim_obj.footstep()"
+	event 33 "script" "anim_obj.footstep()"
+	angle -180
+}
+
+
+
+
+animation "unarmed_unarmed_rattack" "unarmed_unarmed_rattack.mae"
+{
+	event 16 "action" "origin"
+	event 14  "script" "anim_obj.footstep()"
+	event 17  "script" "anim_obj.footstep()"
+	event 27 "script" "anim_obj.footstep()"
+	event 30 "script" "anim_obj.footstep()"
+	event 1 "script" "game.sound_local_obj ( 1200, anim_obj )"
+}
+
+animation "unarmed_unarmed_rattack2" "unarmed_unarmed_rattack2.mae"
+{
+	event 17 "action" "origin"
+	event 1 "script" "game.sound_local_obj ( 1200, anim_obj )"
+}
+
+animation "unarmed_unarmed_lattack" "unarmed_unarmed_rattack.mae"
+{
+	event 16 "action" "origin"
+	event 14  "script" "anim_obj.footstep()"
+	event 17  "script" "anim_obj.footstep()"
+	event 27 "script" "anim_obj.footstep()"
+	event 30 "script" "anim_obj.footstep()"
+	event 1 "script" "game.sound_local_obj ( 1200, anim_obj )"
+}
+
+animation "unarmed_unarmed_lattack2" "unarmed_unarmed_lattack2.mae"
+{
+	event 16 "action" "origin"
+	event 1 "script" "game.sound_local_obj ( 1200, anim_obj )"
+}
+
+animation "unarmed_unarmed_walk" "unarmed_unarmed_walk.mae"
+{
+	loopable
+	distance "origin"
+	event 7  "script" "anim_obj.footstep()"
+	event 9  "script" "anim_obj.footstep()"
+	event 23  "script" "anim_obj.footstep()"
+	event 25  "script" "anim_obj.footstep()"
+}
+
+animation "unarmed_unarmed_run" "unarmed_unarmed_run.mae"
+{
+	loopable
+	distance "origin"
+	event 2  "script" "anim_obj.footstep()"
+	event 5  "script" "anim_obj.footstep()"
+	event 7  "script" "anim_obj.footstep()"
+	event 13  "script" "anim_obj.footstep()"
+}
+
+animation "unarmed_unarmed_idle" "unarmed_unarmed_idle.mae"
+{
+	loopable
+}
+
+animation "unarmed_unarmed_fhit" "unarmed_unarmed_fhit.mae"
+
+
+animation "unarmed_unarmed_lhit" "unarmed_unarmed_lhit.mae"
+
+
+animation "unarmed_unarmed_rhit" "unarmed_unarmed_rhit.mae"
+
+
+animation "unarmed_unarmed_bhit" "unarmed_unarmed_bhit.mae"
+
+
+animation "unarmed_unarmed_fdodge" "unarmed_unarmed_fdodge.mae"
+
+animation "unarmed_unarmed_rdodge" "unarmed_unarmed_fdodge.mae"
+
+animation "unarmed_unarmed_ldodge" "unarmed_unarmed_fdodge.mae"
+
+animation "unarmed_unarmed_bdodge" "unarmed_unarmed_bdodge.mae"
+
+
+animation "unarmed_unarmed_rcriticalswing" "unarmed_unarmed_rattack.mae"
+{
+	event 16 "action" "origin"
+	event 14  "script" "anim_obj.footstep()"
+	event 17  "script" "anim_obj.footstep()"
+	event 27 "script" "anim_obj.footstep()"
+	event 30 "script" "anim_obj.footstep()"
+	event 1 "script" "game.sound_local_obj ( 1200, anim_obj )"
+}
+
+
+
+
+animation "unarmed_unarmed_lcriticalswing" "unarmed_unarmed_rattack.mae"
+{
+	event 16 "action" "origin"
+	event 14  "script" "anim_obj.footstep()"
+	event 17  "script" "anim_obj.footstep()"
+	event 27 "script" "anim_obj.footstep()"
+	event 30 "script" "anim_obj.footstep()"
+	event 1 "script" "game.sound_local_obj ( 1200, anim_obj )"
+}
+
+
+animation "unarmed_unarmed_fidget" "unarmed_unarmed_fidget.mae"
+{
+	event 1 "script" "game.sound_local_obj ( 1202, anim_obj )"
+}
+
+animation "unarmed_unarmed_panic" "unarmed_unarmed_panic.mae"
+{
+	loopable
+	
+}
+
+animation "unarmed_unarmed_combatidle" "unarmed_unarmed_combatidle.mae"
+{
+	loopable
+}
+
+animation "unarmed_unarmed_combatfidget" "unarmed_unarmed_combatidle.mae"
+
+
+animation "abjuration_casting" "abjuration_casting.mae"
+{
+	event 16 "action" "origin"
+	event 1 "script" "game.particles( 'Mon-Luecrotta-Abjuration', anim_obj )"
+}
+	
+
+animation "abjuration_conjuring" "abjuration_conjuring.mae"
+{
+	event 1 "action" "origin"
+	
+	
+}
+
+animation "conjuration_casting" "conjuration_casting.mae"
+{
+	event 20 "action" "origin"
+	
+}
+
+animation "conjuration_conjuring" "abjuration_conjuring.mae"
+{
+	
+	event 1 "action" "origin"
+	
+	
+}
+
+
+animation "divination_casting" "conjuration_casting.mae"
+{
+	event 20 "action" "origin"
+	
+}
+
+animation "divination_conjuring" "abjuration_conjuring.mae"
+{
+	event 1 "action" "origin"
+	
+	
+}
+
+animation "enchantment_casting" "abjuration_casting.mae"
+{
+	event 16 "action" "origin"
+	event 1 "script" "game.particles( 'Mon-Luecrotta-Abjuration', anim_obj )"
+}
+
+animation "enchantment_conjuring" "abjuration_conjuring.mae"
+{
+	
+	event 1 "action" "origin"
+	
+	
+}
+
+animation "evocation_casting" "abjuration_casting.mae"
+{
+	event 16 "action" "origin"
+	event 1 "script" "game.particles( 'Mon-Luecrotta-Abjuration', anim_obj )"
+}
+
+animation "evocation_conjuring" "abjuration_conjuring.mae"
+{
+	
+	event 1 "action" "origin"
+	
+	
+}
+
+animation "illusion_casting" "abjuration_casting.mae"
+{
+	event 16 "action" "origin"
+	event 1 "script" "game.particles( 'Mon-Luecrotta-Abjuration', anim_obj )"
+}
+
+animation "illusion_conjuring" "abjuration_conjuring.mae"
+{
+	event 1 "action" "origin"
+	
+	
+}
+
+animation "necromancy_casting" "necromancy_casting.mae"
+{
+	event 30 "action" "origin"
+	
+}
+
+animation "necromancy_conjuring" "abjuration_conjuring.mae"
+{
+	
+	event 1 "action" "origin"
+	
+	
+}
+
+animation "transmutation_casting" "abjuration_casting.mae"
+{
+	event 16 "action" "origin"
+	event 1 "script" "game.particles( 'Mon-Luecrotta-Abjuration', anim_obj )"
+}
+
+animation "transmutation_conjuring" "abjuration_conjuring.mae"
+{
+	event 1 "action" "origin"
+	
+	
+}
+
+
+animation "falldown" "death.mae"
+
+animation "prone_idle" "prone_idle.mae"
+{
+	loopable
+}
+
+animation "prone_fidget" "prone_idle.mae"
+
+animation "getup" "getup.mae"
+{
+	event 30 "script" "anim_obj.footstep()"
+	event 32  "script" "anim_obj.footstep()"
+	event 39 "script" "anim_obj.footstep()"
+	event 40 "script" "anim_obj.footstep()"
+}
+
+
+animation "death" "death.mae"
+{
+	event 1 "script" "game.sound_local_obj ( 1201, anim_obj )"
+}
+
+animation "dead_idle" "dead_idle.mae"
+{
+	loopable
+}
+
+animation "dead_fidget" "dead_idle.mae"
+
+animation "death_prone_idle" "dead_idle.mae"
+{
+	loopable
+}
+
+animation "death_prone_fidget" "dead_idle.mae"
+
+
+
+
+
+
+
