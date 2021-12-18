@@ -254,3 +254,29 @@ nwt_gore = 3
 nwt_slap = 4
 nwt_slam = 5
 nwt_sting = 6
+
+# female
+pcv_raspy = 0
+pcv_nature_dweller = 1
+pcv_magician = 2
+pcv_low_intelligence_berserker = 3
+pcv_charismatic = 4
+pcv_nimble = 5
+pcv_noble = 6
+pcv_simple_warrior = 7
+pcv_zealous_healer = 8
+
+# male
+pcv_gruff_warrior = 9
+pcv_nature_dweller = 10
+pcv_older_magician = 11
+pcv_illusionist = 12
+pcv_nimble = 13
+pcv_low_intelligence_berserker = 14
+pcv_honest_fighter = 15
+pcv_righteous_warrior = 16
+pcv_happy_trickster = 17
+pcv_arrogant = 18
+pcv_simple_warrior = 19
+pcv_lawful = 20
+pcv_pious = 21

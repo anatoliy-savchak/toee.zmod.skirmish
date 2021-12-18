@@ -46,6 +46,7 @@ def get_character_classes():
 		, CtrlLEAzerRaider
 		, CtrlLEHalfOrcMonk
 		, CtrlLEDireBoar
+		, CtrlLELizardfolk
 		, CtrlLEHumanBlackguardAsPC
 	]
 	return result
@@ -83,6 +84,7 @@ def get_enemy_classes():
 		, CtrlLEAzerRaider
 		, CtrlLEHalfOrcMonk
 		, CtrlLEDireBoar
+		, CtrlLELizardfolk
 		, CtrlLEHumanBlackguard
 	]
 	return result
@@ -1937,12 +1939,59 @@ class CtrlLEDireBoar(CtrlSkirmisherLE):
 		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d8").packed)
 
 		npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
-		npc.condition_add_with_args("Monster Bonus Damage", toee.D20DT_FIRE, toee.dice_new("1d6").packed)
 
 		npc.feat_add(toee.feat_iron_will, 0)
 		npc.feat_add(toee.feat_endurance, 0)
 		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
+
+		utils_npc.npc_generate_hp_avg_first(npc, 0)
+		npc.item_wield_best_all()
+		return
+
+class CtrlLELizardfolk(CtrlSkirmisherLE):
+	@classmethod
+	def get_proto_id(cls): return 14100
+
+	@classmethod
+	def get_price(cls): return 5
+
+	@classmethod
+	def get_title(cls): return "Lizardfolk"
+
+	@classmethod
+	def get_alignment_groups(cls): return [cls.get_alignment_group(), toee.ALIGNMENT_LAWFUL_GOOD, toee.ALIGNMENT_CHAOTIC_GOOD, toee.ALIGNMENT_CHAOTIC_EVIL]
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 2, 8, 0)
+		utils_npc.npc_abilities_set(npc, [13, 10, 13, 9, 10, 10])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 3520) 
+		npc.obj_set_int(toee.obj_f_critter_gender, toee.gender_male)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_lawful)
+		npc.obj_set_int(toee.obj_f_critter_alignment, toee.ALIGNMENT_NEUTRAL)
+		npc.obj_set_int(toee.obj_f_npc_ac_bonus, 5) # natural ac
+		npc.obj_set_int(toee.obj_f_npc_save_fortitude_bonus, 5)
+		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 5)
+		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 5)
+
+		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_claw)
+		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 1) # natural bab
+		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 2) # 2x
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d4").packed)
+
+		#npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
+		#npc.condition_add_with_args("Monster Bonus Damage", toee.D20DT_FIRE, toee.dice_new("1d6").packed)
+
+		npc.feat_add(toee.feat_iron_will, 0)
+		npc.feat_add(toee.feat_endurance, 0)
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_SHIELD_LARGE_WOODEN_2, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(4008, npc)) # Lizardman Club
 
 		utils_npc.npc_generate_hp_avg_first(npc, 0)
 		npc.item_wield_best_all()
@@ -1991,12 +2040,13 @@ class CtrlLEHumanBlackguard(CtrlSkirmisherLE):
 		utils_npc.npc_abilities_set(npc, [16, 12, 14, 10, 12, 14])
 
 		npc.obj_set_int(toee.obj_f_critter_portrait, 1060) #ELM_1060_b_paladin
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_arrogant)
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEXTOR)
 		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.evil)
 		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.destruction)
 
-		npc.obj_set_int(toee.obj_f_critter_skill_idx, toee.skill_concentration, 5 + 4*2)
+		npc.obj_set_idx_int(toee.obj_f_critter_skill_idx, toee.skill_concentration, 5 + 4*2)
 
 		npc.feat_add(toee.feat_power_attack, 0)
 		npc.feat_add(toee.feat_cleave, 0)
