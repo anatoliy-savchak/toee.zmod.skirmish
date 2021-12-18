@@ -45,6 +45,7 @@ def get_character_classes():
 		, CtrlCGWoodElfSkirmisher
 		, CtrlLEAzerRaider
 		, CtrlLEHalfOrcMonk
+		, CtrlLEDireBoar
 		, CtrlLEHumanBlackguardAsPC
 	]
 	return result
@@ -81,6 +82,7 @@ def get_enemy_classes():
 		, CtrlCGWoodElfSkirmisher
 		, CtrlLEAzerRaider
 		, CtrlLEHalfOrcMonk
+		, CtrlLEDireBoar
 		, CtrlLEHumanBlackguard
 	]
 	return result
@@ -1858,6 +1860,9 @@ class CtrlLEHalfOrcMonk(CtrlSkirmisherLE):
 	@classmethod
 	def get_title(cls): return "Half-Orc Monk"
 
+	@classmethod
+	def get_alignment_groups(cls): return [cls.get_alignment_group(), toee.ALIGNMENT_LAWFUL_GOOD]
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
@@ -1896,6 +1901,50 @@ class CtrlLEHalfOrcMonk(CtrlSkirmisherLE):
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_wondrous.PROTO_WONDROUS_AMULET_OF_MIGHTY_FISTS_PLUS_1, npc))
 		
 		utils_npc.npc_generate_hp_avg_first(npc)
+		npc.item_wield_best_all()
+		return
+
+class CtrlLEDireBoar(CtrlSkirmisherLE):
+	@classmethod
+	def get_proto_id(cls): return 14979
+
+	@classmethod
+	def get_price(cls): return 23
+
+	@classmethod
+	def get_title(cls): return "Dire Boar"
+
+	@classmethod
+	def get_alignment_groups(cls): return [cls.get_alignment_group(), toee.ALIGNMENT_LAWFUL_GOOD, toee.ALIGNMENT_CHAOTIC_GOOD, toee.ALIGNMENT_CHAOTIC_EVIL]
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 7, 8, 0)
+		utils_npc.npc_abilities_set(npc, [27, 10, 17, 2, 13, 8])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 4780) # MOO_4781_m_Dire_Boar.tga
+		npc.obj_set_int(toee.obj_f_critter_alignment, toee.ALIGNMENT_NEUTRAL)
+		npc.obj_set_int(toee.obj_f_npc_ac_bonus, 6) # natural ac
+		npc.obj_set_int(toee.obj_f_npc_save_fortitude_bonus, 5)
+		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 5)
+		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 5)
+
+
+		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_gore)
+		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 5) # natural bab
+		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 1)
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d8").packed)
+
+		npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
+		npc.condition_add_with_args("Monster Bonus Damage", toee.D20DT_FIRE, toee.dice_new("1d6").packed)
+
+		npc.feat_add(toee.feat_iron_will, 0)
+		npc.feat_add(toee.feat_endurance, 0)
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		utils_npc.npc_generate_hp_avg_first(npc, 0)
 		npc.item_wield_best_all()
 		return
 
