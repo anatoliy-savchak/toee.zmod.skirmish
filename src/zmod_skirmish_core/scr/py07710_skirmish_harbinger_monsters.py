@@ -43,6 +43,7 @@ def get_character_classes():
 		, CtrlCGVadaniaHalfElfDruidAsPC
 		, CtrlCGWildElfBarbarian
 		, CtrlCGWoodElfSkirmisher
+		, CtrlLEAzerRaider
 	]
 	return result
 
@@ -76,6 +77,7 @@ def get_enemy_classes():
 		, CtrlCGVadaniaHalfElfDruid
 		, CtrlCGWildElfBarbarian
 		, CtrlCGWoodElfSkirmisher
+		, CtrlLEAzerRaider
 	]
 	return result
 
@@ -618,10 +620,10 @@ class CtrlLGLargeEarthElemental(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 2)
 
 		# atk +4/+4 => -3/-3 dmg 2d8+7=> 2d8+0
-		#npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, 5) # Slam
-		#npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, -3)
-		#npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 2)
-		#npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("2d8").packed)
+		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, 5) # Slam
+		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, -2)
+		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 2)
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("2d8").packed)
 
 		npc.feat_add(toee.feat_cleave, 1)
 
@@ -1774,5 +1776,71 @@ class CtrlCGWoodElfSkirmisher(CtrlSkirmisherCG):
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_ARROW_QUIVER, npc)).obj_set_int(toee.obj_f_ammo_quantity, 100)
 
 		utils_npc.npc_generate_hp_avg_first(npc, 1)
+		npc.item_wield_best_all()
+		return
+
+class CtrlSkirmisherLE(CtrlSkirmisher):
+	@classmethod
+	def get_alignment_group(cls): return toee.ALIGNMENT_LAWFUL_EVIL
+
+class CtrlLEAzerRaider(CtrlSkirmisherLE):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_DWARF_MAN # 14638
+
+	@classmethod
+	def get_price(cls): return 5
+
+	@classmethod
+	def get_title(cls): return "Azer Raider"
+
+	@classmethod
+	def get_alignment_groups(cls): return [cls.get_alignment_group(), toee.ALIGNMENT_LAWFUL_GOOD]
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 2, 8, 0)
+		utils_npc.npc_abilities_set(npc, [13, 13, 13-2, 12, 12, 9+2])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 2000) # DWM_2000_b_fighter
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		#npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
+		npc.obj_set_int(toee.obj_f_npc_ac_bonus, 2) # natural ac
+		npc.obj_set_int(toee.obj_f_npc_save_fortitude_bonus, 3)
+		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 3)
+		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 3)
+		#obj_f_scale
+
+		cat = const_toee.mc_type_outsider + ((toee.mc_subtype_fire & toee.mc_subtype_extraplanar) << 32)
+		npc.obj_set_int64(toee.obj_f_critter_monster_category, cat)
+		# bab will be same as HD = 2. But it wont work in actual attacks for monsters...
+
+		#npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_bite)
+		#npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 2)
+		#npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 1)
+		#npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d8").packed)
+
+
+		#npc.condition_add_with_args("Base_Num_Attack", 3) # should be 2
+		#npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
+		npc.condition_add_with_args("Base_Movement", 0, 150) # should be 30 ft, factor: 1.33 = 30/20
+		npc.condition_add_with_args("Monster Bonus Damage", toee.D20DT_FIRE, toee.dice_new("1d6").packed)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_longhair
+		hairStyle.color = const_toee.hair_color_red
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_PADDED_RED, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_SCALE_MAIL_FINE, npc))
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_WARHAMMER, npc))
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_SHIELD_LARGE_WOODEN_SPIKED, npc))
+
+		utils_npc.npc_generate_hp_avg_first(npc, 0)
 		npc.item_wield_best_all()
 		return
