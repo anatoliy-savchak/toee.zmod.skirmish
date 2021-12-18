@@ -50,6 +50,7 @@ def get_character_classes():
 		, CtrlLEShamblingMound
 		, CtrlLEWolf
 		, CtrlCEThriKreenRanger
+		, CtrlLEBarghest
 		, CtrlLEHumanBlackguardAsPC
 	]
 	return result
@@ -91,6 +92,7 @@ def get_enemy_classes():
 		, CtrlLEShamblingMound
 		, CtrlLEWolf
 		, CtrlCEThriKreenRanger
+		, CtrlLEBarghest
 		, CtrlLEHumanBlackguard
 	]
 	return result
@@ -2224,6 +2226,57 @@ class CtrlCEThriKreenRanger(CtrlSkirmisherLE):
 		npc.condition_add("Immunity_Sleep")
 
 		npc.feat_add(toee.feat_deflect_arrows, 0)
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		utils_npc.npc_generate_hp_avg_first(npc, 1)
+		npc.item_wield_best_all()
+		return
+
+class CtrlLEBarghest(CtrlSkirmisherLE):
+	@classmethod
+	def get_proto_id(cls): return 14897
+
+	@classmethod
+	def get_price(cls): return 27
+
+	@classmethod
+	def get_title(cls): return "Barghest"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 6, 8, 0)
+		utils_npc.npc_abilities_set(npc, [17, 15, 13, 14, 14, 14])
+
+		#npc.obj_set_int(toee.obj_f_critter_portrait, 5310) # MOO_5311_m_scion todo
+		npc.obj_set_int(toee.obj_f_critter_gender, toee.gender_male)
+		#npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_lawful)
+		#npc.obj_set_int(toee.obj_f_critter_alignment, toee.ALIGNMENT_CHAOTIC_NEUTRAL)
+		npc.obj_set_int(toee.obj_f_npc_ac_bonus, 6) # natural ac
+		npc.obj_set_int(toee.obj_f_npc_save_fortitude_bonus, 5)
+		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 5)
+		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 5)
+
+		cat = const_toee.mc_type_outsider + ((toee.mc_subtype_extraplanar & toee.mc_subtype_evil & toee.mc_subtype_lawful) << 32)
+		npc.obj_set_int64(toee.obj_f_critter_monster_category, cat)
+
+		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_claw)
+		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 9-3) # natural bab
+		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 1) # 1x
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d10").packed)
+
+		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 1, const_toee.nwt_claw)
+		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 1, 4-3) # natural bab
+		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 1, 1) # 1x
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 1, toee.dice_new("1d6").packed)
+
+		#npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
+		npc.condition_add_with_args("Monster DR Magic", 5)
+		npc.condition_add("Immunity_Sleep")
+
+		npc.feat_add(toee.feat_combat_reflexes, 0)
+		npc.feat_add(toee.feat_improved_initiative, 0)
 		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 
