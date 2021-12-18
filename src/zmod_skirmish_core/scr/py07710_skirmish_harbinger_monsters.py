@@ -44,6 +44,7 @@ def get_character_classes():
 		, CtrlCGWildElfBarbarian
 		, CtrlCGWoodElfSkirmisher
 		, CtrlLEAzerRaider
+		, CtrlLEHalfOrcMonk
 		, CtrlLEHumanBlackguardAsPC
 	]
 	return result
@@ -79,6 +80,7 @@ def get_enemy_classes():
 		, CtrlCGWildElfBarbarian
 		, CtrlCGWoodElfSkirmisher
 		, CtrlLEAzerRaider
+		, CtrlLEHalfOrcMonk
 		, CtrlLEHumanBlackguard
 	]
 	return result
@@ -387,7 +389,6 @@ class CtrlLGEmberHumanMonk(CtrlSkirmisherLG):
 		hairStyle.update_npc(npc)
 
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_MONK, npc))
-		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_MONK_OUTFIT, npc))
 		
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_MONK_OUTFIT, npc))
 
@@ -1847,6 +1848,56 @@ class CtrlLEAzerRaider(CtrlSkirmisherLE):
 		npc.item_wield_best_all()
 		return
 
+class CtrlLEHalfOrcMonk(CtrlSkirmisherLE):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_HALFORC_MAN
+
+	@classmethod
+	def get_price(cls): return 17
+
+	@classmethod
+	def get_title(cls): return "Half-Orc Monk"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_monk, 4)
+		#AC 14 = 10 + 1 wis + 2 dex + 1 monk
+		#SPD 20 (4)
+		#HP 25 = 1d8 + 3d8 + 3*x => 
+
+		#STR: 18 due to atk is 7 = 3 bab (lv 4) + 3 str + +1 wndrs + 1 wpn foc + 1 monk - 2 flurry; dmg will be 1d6 + 2 = 8
+		#DEX: 14 due to AC dex mod = 2
+		#CON: 12, see HP calculation
+		#INT: 08 any
+		#WIS: 12 due to AC wis bonus = 1
+		#CHA: 08 any
+
+		utils_npc.npc_abilities_set(npc, [16, 14, 12, 8, 12, 8]) 
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 3030) #HOM_3030_b_fighter
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEXTOR)
+
+		npc.feat_add(toee.feat_weapon_focus_unarmed_strike_medium_sized_being, 0)
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_ponytail
+		hairStyle.color = const_toee.hair_color_black
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_MONK, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_ROBES_MONK_ORANGE, npc))
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_wondrous.PROTO_WONDROUS_AMULET_OF_MIGHTY_FISTS_PLUS_1, npc))
+		
+		utils_npc.npc_generate_hp_avg_first(npc)
+		npc.item_wield_best_all()
+		return
 
 class CtrlLEHumanBlackguard(CtrlSkirmisherLE):
 	@classmethod
@@ -1888,13 +1939,15 @@ class CtrlLEHumanBlackguard(CtrlSkirmisherLE):
 		#WIS: 12 due to 1st level DC: 13 => 10 + 1 lv + 1 mod wis
 		#CHA: 14
 
-		utils_npc.npc_abilities_set(npc, [16, 12, 14, 8, 12, 14])
+		utils_npc.npc_abilities_set(npc, [16, 12, 14, 10, 12, 14])
 
 		npc.obj_set_int(toee.obj_f_critter_portrait, 1060) #ELM_1060_b_paladin
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
-		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
-		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.good)
-		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.law)
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEXTOR)
+		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.evil)
+		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.destruction)
+
+		npc.obj_set_int(toee.obj_f_critter_skill_idx, toee.skill_concentration, 5 + 4*2)
 
 		npc.feat_add(toee.feat_power_attack, 0)
 		npc.feat_add(toee.feat_cleave, 0)
@@ -1928,4 +1981,5 @@ class CtrlLEHumanBlackguard(CtrlSkirmisherLE):
 
 class CtrlLEHumanBlackguardAsPC(CtrlLEHumanBlackguard):
 	@classmethod
-	def get_proto_id(cls): return const_proto_npc.PROTO_PC_HALFELF_WOMAN
+	def get_proto_id(cls): return const_proto_npc.PROTO_PC_HUMAN_MAN
+
