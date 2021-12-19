@@ -53,6 +53,7 @@ def get_character_classes():
 		, CtrlLEBarghest
 		, CtrlLEBeardedDevil
 		, CtrlLEDisplacerBeast
+		, CtrlLEGoblinSneak
 		, CtrlLEHumanBlackguardAsPC
 	]
 	return result
@@ -97,6 +98,7 @@ def get_enemy_classes():
 		, CtrlLEBarghest
 		, CtrlLEBeardedDevil
 		, CtrlLEDisplacerBeast
+		, CtrlLEGoblinSneak
 		, CtrlLEHumanBlackguard
 	]
 	return result
@@ -638,11 +640,12 @@ class CtrlLGLargeEarthElemental(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 2)
 		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 2)
 
+		# he is using power attack 8, todo!
 		# atk +4/+4 => -3/-3 dmg 2d8+7=> 2d8+0
 		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, 5) # Slam
-		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, -2)
+		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, -3)
 		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 2)
-		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("2d8").packed)
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("2d8+8").packed)
 
 		npc.feat_add(toee.feat_cleave, 1)
 
@@ -1899,6 +1902,7 @@ class CtrlLEHalfOrcMonk(CtrlSkirmisherLE):
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEXTOR)
 
+		# +7/7 (10 magic)
 		npc.feat_add(toee.feat_weapon_focus_unarmed_strike_medium_sized_being, 0)
 		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
@@ -1935,7 +1939,7 @@ class CtrlLEDireBoar(CtrlSkirmisherLE):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		utils_npc.npc_hitdice_set(npc, 7, 8, 0)
-		utils_npc.npc_abilities_set(npc, [27, 10, 17, 2, 13, 8])
+		utils_npc.npc_abilities_set(npc, [10+12*2, 10, 17, 2, 13, 8])
 
 		npc.obj_set_int(toee.obj_f_critter_portrait, 4780) # MOO_4781_m_Dire_Boar.tga
 		npc.obj_set_int(toee.obj_f_critter_alignment, toee.ALIGNMENT_NEUTRAL)
@@ -1944,9 +1948,10 @@ class CtrlLEDireBoar(CtrlSkirmisherLE):
 		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 5)
 		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 5)
 
-
+		# +12 (15)
 		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_gore)
-		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 5) # natural bab
+		#npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 5) # natural bab
+		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 0) # natural bab
 		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 1)
 		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d8").packed)
 
@@ -1989,10 +1994,11 @@ class CtrlLELizardfolk(CtrlSkirmisherLE):
 		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 5)
 		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 5)
 
+		# +2 (5)
 		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_claw)
 		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 1) # natural bab
 		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 2) # 2x
-		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d4").packed)
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d6").packed)
 
 		#npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
 		#npc.condition_add_with_args("Monster Bonus Damage", toee.D20DT_FIRE, toee.dice_new("1d6").packed)
@@ -2026,7 +2032,7 @@ class CtrlLEShamblingMound(CtrlSkirmisherLE):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		#utils_npc.npc_hitdice_set(npc, 2, 8, 0)
-		#utils_npc.npc_abilities_set(npc, [13, 10, 13, 9, 10, 10])
+		utils_npc.npc_abilities_set(npc, [22, 10, 17, 7, 10, 9])
 
 		#npc.obj_set_int(toee.obj_f_critter_portrait, 3520) 
 		#npc.obj_set_int(toee.obj_f_critter_gender, toee.gender_male)
@@ -2037,15 +2043,16 @@ class CtrlLEShamblingMound(CtrlSkirmisherLE):
 		#npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 5)
 		#npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 5)
 
+		# +11 (15)
 		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_slam)
 		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 6) # natural bab
 		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 1) # 1x
-		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("2d6").packed)
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("2d8").packed)
 
 		npc.condition_add_with_args("Base_Movement", 0, 66) # should be 20 ft, factor: 0.66 = 20/30
 		#npc.condition_add_with_args("Monster Bonus Damage", toee.D20DT_FIRE, toee.dice_new("1d6").packed)
 
-		npc.feat_add(toee.feat_weapon_focus_unarmed_strike_medium_sized_being, 0)
+		#npc.feat_add(toee.feat_weapon_focus_unarmed_strike_medium_sized_being, 0)
 		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 
@@ -2073,7 +2080,7 @@ class CtrlLEWolf(CtrlSkirmisherLE):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		#utils_npc.npc_hitdice_set(npc, 2, 8, 0)
-		#utils_npc.npc_abilities_set(npc, [13, 10, 13, 9, 10, 10])
+		utils_npc.npc_abilities_set(npc, [13, 15, 15, 2, 14, 6])
 
 		#npc.obj_set_int(toee.obj_f_critter_portrait, 3520) 
 		#npc.obj_set_int(toee.obj_f_critter_gender, toee.gender_male)
@@ -2084,6 +2091,7 @@ class CtrlLEWolf(CtrlSkirmisherLE):
 		#npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 5)
 		#npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 5)
 
+		# +3 (5)
 		#npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_slam)
 		#npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 6) # natural bab
 		#npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 1) # 1x
@@ -2101,87 +2109,6 @@ class CtrlLEWolf(CtrlSkirmisherLE):
 		#self._hide_loot(utils_item.item_create_in_inventory(4008, npc)) # Lizardman Club
 
 		utils_npc.npc_generate_hp_avg_first(npc, 0)
-		npc.item_wield_best_all()
-		return
-
-class CtrlLEHumanBlackguard(CtrlSkirmisherLE):
-	@classmethod
-	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_MAN
-
-	@classmethod
-	def get_commander_level(cls): return 6
-
-	@classmethod
-	def get_price(cls): return 24
-
-	@classmethod
-	def get_title(cls): return "Human Blackguard"
-
-	def after_created(self, npc):
-		assert isinstance(npc, toee.PyObjHandle)
-
-		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
-
-		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 0, toee.stat_level_fighter)
-		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 1, toee.stat_level_fighter)
-		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 2, toee.stat_level_fighter)
-		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 3, toee.stat_level_fighter)
-		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 4, toee.stat_level_fighter) # lv 5 fighter
-
-		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 5, toee.stat_level_blackguard)
-		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 6, toee.stat_level_blackguard)
-		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 7, toee.stat_level_blackguard)
-		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 8, toee.stat_level_blackguard) # lv 9, Fighter 5, Blackguard 4
-
-		#AC 20 = 10 + 9 full plate + 1 dex
-		#SPD 20 (4)
-		#HP 70 = 1d10 + 4d10 + 4d10 + 9*x => {10} + {+22=32} + {+22=54} +9x = CON 14?
-
-		#STR: 16 due to atk is 14 = 9 bab + 3 str + 1 magic + 1 wf; 2d6+4+1 = 7<>17 ~ 12.5
-		#DEX: 12 due to AC dex mod = 1
-		#CON: 14, see HP calculation
-		#INT: 08 any
-		#WIS: 12 due to 1st level DC: 13 => 10 + 1 lv + 1 mod wis
-		#CHA: 14
-
-		utils_npc.npc_abilities_set(npc, [16, 12, 14, 10, 12, 14])
-
-		npc.obj_set_int(toee.obj_f_critter_portrait, 1060) #ELM_1060_b_paladin
-		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_arrogant)
-		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
-		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEXTOR)
-		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.evil)
-		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.destruction)
-
-		npc.obj_set_idx_int(toee.obj_f_critter_skill_idx, toee.skill_concentration, 5 + 4*2)
-
-		npc.feat_add(toee.feat_power_attack, 0)
-		npc.feat_add(toee.feat_cleave, 0)
-		npc.feat_add(toee.feat_sunder, 0)
-		npc.feat_add(toee.feat_weapon_focus_greatsword, 0)
-
-		npc.feat_add(toee.feat_alertness, 1)
-		self.setup_name(npc, self.get_title())
-
-		hairStyle = utils_npc.HairStyle.from_npc(npc)
-		hairStyle.style = const_toee.hair_style_shorthair
-		hairStyle.color = const_toee.hair_color_white
-		hairStyle.update_npc(npc)
-
-		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_GILDED_BOOTS, npc))
-		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_GILDED_GLOVES, npc))
-		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_FULL_PLATE_PLUS_1_BLACK, npc))
-		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CIRCLET_HOODLESS, npc))
-		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_RED, npc))
-
-		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_GREATSWORD_PLUS_1, npc))
-
-		npc.spells_memorized_forget()
-		npc.spell_memorized_add(toee.spell_doom, toee.stat_level_blackguard, 1)
-		npc.spell_memorized_add(toee.spell_cure_moderate_wounds, toee.stat_level_blackguard, 2)
-		npc.spells_pending_to_memorized()
-
-		utils_npc.npc_generate_hp_avg_first(npc)
 		npc.item_wield_best_all()
 		return
 
@@ -2215,10 +2142,11 @@ class CtrlCEThriKreenRanger(CtrlSkirmisherLE):
 
 		npc.obj_set_int(toee.obj_f_critter_monster_category, const_toee.mc_type_monstrous_humanoid)
 
+		# +9/+4 (10/5)
 		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_claw)
 		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 5) # natural bab
 		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 1) # 1x
-		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d10").packed)
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d12").packed)
 
 		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 1, const_toee.nwt_claw)
 		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 1, -1) # natural bab
@@ -2265,15 +2193,16 @@ class CtrlLEBarghest(CtrlSkirmisherLE):
 		cat = const_toee.mc_type_outsider + ((toee.mc_subtype_extraplanar & toee.mc_subtype_evil & toee.mc_subtype_lawful) << 32)
 		npc.obj_set_int64(toee.obj_f_critter_monster_category, cat)
 
+		# +9/+4 (10/5)
 		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_claw)
 		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 9-3) # natural bab
 		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 1) # 1x
-		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d10").packed)
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d12").packed)
 
 		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 1, const_toee.nwt_claw)
 		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 1, 4-3) # natural bab
 		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 1, 1) # 1x
-		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 1, toee.dice_new("1d6").packed)
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 1, toee.dice_new("1d4").packed)
 
 		#npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
 		npc.condition_add_with_args("Monster DR Magic", 5)
@@ -2316,6 +2245,7 @@ class CtrlLEBeardedDevil(CtrlSkirmisherLE):
 		cat = const_toee.mc_type_outsider + ((toee.mc_subtype_extraplanar & toee.mc_subtype_evil & toee.mc_subtype_lawful & toee.mc_subtype_demon) << 32)
 		npc.obj_set_int64(toee.obj_f_critter_monster_category, cat)
 
+		# +11/+6 (10)
 		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_claw)
 		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 11-2) # natural bab
 		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 1) # 1x
@@ -2324,13 +2254,13 @@ class CtrlLEBeardedDevil(CtrlSkirmisherLE):
 		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 1, const_toee.nwt_claw)
 		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 1, 11-5-2) # natural bab
 		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 1, 1) # 1x
-		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 1, toee.dice_new("1d6").packed)
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 1, toee.dice_new("1d10").packed)
 
 		npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
 		npc.condition_add_with_args("Monster DR Magic", 5)
 		npc.condition_add_with_args("Monster Energy Immunity", toee.D20DT_FIRE)
-		npc.condition_add_with_args("Monster Energy Resistance", 5, toee.D20DT_ACID)
-		npc.condition_add_with_args("Monster Energy Resistance", 5, toee.D20DT_COLD)
+		#npc.condition_add_with_args("Monster Energy Resistance", 5, toee.D20DT_ACID) todo
+		#npc.condition_add_with_args("Monster Energy Resistance", 5, toee.D20DT_COLD)
 		npc.condition_add_with_args("Spell Resistance", 10 + 6)
 		
 		npc.condition_add("Immunity_Sleep")
@@ -2344,7 +2274,6 @@ class CtrlLEBeardedDevil(CtrlSkirmisherLE):
 		utils_npc.npc_generate_hp_avg_first(npc, 1)
 		npc.item_wield_best_all()
 		return
-
 
 class CtrlLEDisplacerBeast(CtrlSkirmisherLE):
 	@classmethod
@@ -2374,6 +2303,7 @@ class CtrlLEDisplacerBeast(CtrlSkirmisherLE):
 		cat = const_toee.mc_type_magical_beast
 		npc.obj_set_int64(toee.obj_f_critter_monster_category, cat)
 
+		#Dmg: +9/+9 (10): d10
 		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_claw)
 		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 9-3) # natural bab
 		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 2) # x
@@ -2390,7 +2320,155 @@ class CtrlLEDisplacerBeast(CtrlSkirmisherLE):
 		npc.item_wield_best_all()
 		return
 
-	
+class CtrlLEGoblinSneak(CtrlSkirmisherLE):
+	@classmethod
+	def get_proto_id(cls): return 14636
+
+	@classmethod
+	def get_price(cls): return 6
+
+	@classmethod
+	def get_title(cls): return "Goblin Sneak"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		# LVL 1, SPD: 6, AC: 17, HP: 5
+		# MELEE: +2 (5)
+		# RANGED: +4 (5)
+		# TYPE: Small Humanoid (Goblinoid)
+		# SPECIAL ABILITIES: Slow Ranged Attack; Sneak Attack +5;
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		#utils_npc.npc_hitdice_set(npc, 1, 8, 0) # MM1
+		utils_npc.npc_abilities_set(npc, [10, 14, 14, 10, 9, 6]) # MM1
+
+		npc.make_class(toee.stat_level_rogue, 1)
+		#AC 17 = 10 + 2 leather + 2 dex + 1 small
+		#SPD 20 (4)
+		#HP 5 = 1d6/2 + 1*x => 14 CON
+
+		#STR: 18 due to atk is 2 = 1 bab + 0 str + 1 small; dmg will be 1d6 + 0 = 3.5
+		#DEX: 14 due to atk is 4 = 1 bab + 2 dex + 1 small; dmg will be 1d6 + 0 = 3.5
+		#CON: 12, see HP calculation
+		#INT: 08 any
+		#WIS: 12 due to AC wis bonus = 1
+		#CHA: 08 any
+
+		#npc.obj_set_int(toee.obj_f_critter_portrait, 5310) # MOO_5311_m_scion todo
+		npc.obj_set_int(toee.obj_f_critter_gender, toee.gender_male)
+		#npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_lawful)
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_npc_ac_bonus, 2) # natural ac
+		npc.obj_set_int(toee.obj_f_npc_save_fortitude_bonus, 0)
+		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 0)
+		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 0)
+
+		cat = const_toee.mc_type_humanoid + ((toee.mc_subtype_goblinoid) << 32)
+		npc.obj_set_int64(toee.obj_f_critter_monster_category, cat)
+
+		# +2 (5)
+
+		#npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
+		npc.condition_add_with_args("Base_Attack_Bonus1", 1)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_PADDED_RED, npc))
+		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_LEATHER_ARMOR_BROWN, npc)))
+		#self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_SHIELD_SMALL_WOODEN, npc)))
+
+		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_MORNINGSTAR, npc)))
+		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTBOW, npc)))
+		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_ARROW_QUIVER, npc))).obj_set_int(toee.obj_f_ammo_quantity, 100)
+
+		utils_npc.npc_generate_hp_avg_first(npc, 0)
+		npc.item_wield_best_all()
+		return
+
+class CtrlLEHumanBlackguard(CtrlSkirmisherLE):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_MAN
+
+	@classmethod
+	def get_commander_level(cls): return 6
+
+	@classmethod
+	def get_price(cls): return 24
+
+	@classmethod
+	def get_title(cls): return "Human Blackguard"
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+
+		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 0, toee.stat_level_fighter)
+		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 1, toee.stat_level_fighter)
+		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 2, toee.stat_level_fighter)
+		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 3, toee.stat_level_fighter)
+		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 4, toee.stat_level_fighter) # lv 5 fighter
+
+		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 5, toee.stat_level_blackguard)
+		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 6, toee.stat_level_blackguard)
+		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 7, toee.stat_level_blackguard)
+		npc.obj_set_idx_int(toee.obj_f_critter_level_idx, 8, toee.stat_level_blackguard) # lv 9, Fighter 5, Blackguard 4
+
+		#AC 20 = 10 + 9 full plate + 1 dex
+		#SPD 20 (4)
+		#HP 70 = 1d10 + 4d10 + 4d10 + 9*x => {10} + {+22=32} + {+22=54} +9x = CON 14?
+
+		#Dmg: +14/+9 (10 magic)
+		#STR: 16 due to atk is 14 = 9 bab + 3 str + 1 magic + 1 wf; ~9.5
+		#DEX: 12 due to AC dex mod = 1
+		#CON: 14, see HP calculation
+		#INT: 08 any
+		#WIS: 12 due to 1st level DC: 13 => 10 + 1 lv + 1 mod wis
+		#CHA: 14
+
+		utils_npc.npc_abilities_set(npc, [16, 12, 14, 10, 12, 14])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 1060) #ELM_1060_b_paladin
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_arrogant)
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEXTOR)
+		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.evil)
+		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.destruction)
+
+		npc.obj_set_idx_int(toee.obj_f_critter_skill_idx, toee.skill_concentration, 5 + 4*2)
+
+		npc.feat_add(toee.feat_power_attack, 0)
+		npc.feat_add(toee.feat_cleave, 0)
+		npc.feat_add(toee.feat_sunder, 0)
+		npc.feat_add(toee.feat_exotic_weapon_proficiency_bastard_sword, 0)
+		npc.feat_add(toee.feat_weapon_focus_bastard_sword, 0)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_shorthair
+		hairStyle.color = const_toee.hair_color_white
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_GILDED_BOOTS, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_GILDED_GLOVES, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_FULL_PLATE_PLUS_1_BLACK, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CIRCLET_HOODLESS, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_RED, npc))
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SWORD_BASTARD_PLUS_1, npc))
+
+		npc.spells_memorized_forget()
+		npc.spell_memorized_add(toee.spell_doom, toee.stat_level_blackguard, 1)
+		npc.spell_memorized_add(toee.spell_cure_moderate_wounds, toee.stat_level_blackguard, 2)
+		npc.spells_pending_to_memorized()
+
+		utils_npc.npc_generate_hp_avg_first(npc)
+		npc.item_wield_best_all()
+		return
 
 class CtrlLEHumanBlackguardAsPC(CtrlLEHumanBlackguard):
 	@classmethod
