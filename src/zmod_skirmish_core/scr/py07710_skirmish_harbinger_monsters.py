@@ -54,6 +54,8 @@ def get_character_classes():
 		, CtrlLEBeardedDevil
 		, CtrlLEDisplacerBeast
 		, CtrlLEGoblinSneak
+		, CtrlCGHalfOrcFighterAsPC
+		, CtrlLEHellHound
 		, CtrlLEHumanBlackguardAsPC
 	]
 	return result
@@ -99,6 +101,8 @@ def get_enemy_classes():
 		, CtrlLEBeardedDevil
 		, CtrlLEDisplacerBeast
 		, CtrlLEGoblinSneak
+		, CtrlCGHalfOrcFighter
+		, CtrlLEHellHound
 		, CtrlLEHumanBlackguard
 	]
 	return result
@@ -149,6 +153,9 @@ class CtrlSkirmisher(ctrl_behaviour.CtrlBehaviour):
 
 	@classmethod
 	def is_unique(cls): return False
+
+	@classmethod
+	def get_stats(cls): return {}
 
 class CtrlSkirmisherLG(CtrlSkirmisher):
 	@classmethod
@@ -2369,7 +2376,7 @@ class CtrlLEGoblinSneak(CtrlSkirmisherLE):
 
 		# +2 (5)
 
-		#npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
+		#npc.condition_add_with_args("Base_Movement", 0, 150) # should be 30 ft, factor: 1.5 = 30/20
 		npc.condition_add_with_args("Base_Attack_Bonus1", 1)
 
 		npc.feat_add(toee.feat_alertness, 1)
@@ -2382,6 +2389,119 @@ class CtrlLEGoblinSneak(CtrlSkirmisherLE):
 		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_MORNINGSTAR, npc)))
 		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTBOW, npc)))
 		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_ARROW_QUIVER, npc))).obj_set_int(toee.obj_f_ammo_quantity, 100)
+
+		utils_npc.npc_generate_hp_avg_first(npc, 0)
+		npc.item_wield_best_all()
+		return
+
+class CtrlCGHalfOrcFighter(CtrlSkirmisherLE):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_HALFORC_MAN
+
+	@classmethod
+	def get_price(cls): return 21
+
+	@classmethod
+	def get_title(cls): return "Half-Orc Fighter"
+
+	@classmethod
+	def get_commander_level(cls): return 3
+
+	@classmethod
+	def get_stats(cls): return {"Lvl": "2", "Spd": "4", "AC": "18", "HP": "20", "Type": "Humanoid (Orc)", "Commander Effect": "Melee attack +2"}
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_fighter, int(self.get_stats()["Lvl"]))
+		#AC 18 = 10 + 0 dex + 8 plate
+		#SPD 20 (4)
+		#HP 20 = 1d10 + 1d10 + 2x = {=10} + {6+10=16} + 2con x 2 {16+4=20}
+
+		#STR: 16 atk 10 = 2 bab + 3 str + 1 wf + 1 mkw, =>10
+		#DEX: 10 due to AC dex mod = 0
+		#CON: 14, see HP calculation
+		#INT: 6
+		#WIS: 12
+		#CHA: 8
+
+		utils_npc.npc_abilities_set(npc, [14, 10, 14, 8, 12, 8])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 3020) #HOM_3020_b_barbarian
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_KORD)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_low_intelligence_berserker)
+
+		npc.feat_add(toee.feat_weapon_focus_greataxe, 0)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_mohawk
+		hairStyle.color = const_toee.hair_color_black
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_GILDED_BOOTS, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_GILDED_GLOVES, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_BLACK, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CIRCLET_HOODLESS, npc))
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_HELM_BARBARIAN, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_FULL_PLATE_BLACK, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_GREATSWORD_MASTERWORK, npc))
+
+		utils_npc.npc_generate_hp_avg_first(npc, 1)
+		npc.item_wield_best_all()
+		return
+
+class CtrlCGHalfOrcFighterAsPC(CtrlCGHalfOrcFighter):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_PC_HALFORC_MAN
+
+class CtrlLEHellHound(CtrlSkirmisherLE):
+	@classmethod
+	def get_proto_id(cls): return 14540
+
+	@classmethod
+	def get_price(cls): return 10
+
+	@classmethod
+	def get_title(cls): return "Hell Hound"
+
+	@classmethod
+	def get_stats(cls): return {"Lvl": "4", "Spd": "8", "AC": "16", "HP": "20", "Type": "Outsider"}
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 4, 8, 0)
+		utils_npc.npc_abilities_set(npc, [13, 13, 13, 6, 10, 6])
+
+		#npc.obj_set_int(toee.obj_f_critter_portrait, 5050) # MOO_5051_m_Shadow_Mastiff todo
+		npc.obj_set_int(toee.obj_f_critter_gender, toee.gender_male)
+		#npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_lawful)
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_npc_ac_bonus, 5) # natural ac
+		npc.obj_set_int(toee.obj_f_npc_save_fortitude_bonus, 4)
+		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 4)
+		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 4)
+
+		cat = const_toee.mc_type_outsider + ((toee.mc_subtype_evil & toee.mc_subtype_fire & toee.mc_subtype_extraplanar & toee.mc_subtype_lawful) << 32)
+		npc.obj_set_int64(toee.obj_f_critter_monster_category, cat)
+
+		#Dmg: +9/+9 (10): d10
+		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_claw)
+		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 5-1) # natural bab
+		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 1) # x
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d8").packed)
+
+		npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
+		
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
 
 		utils_npc.npc_generate_hp_avg_first(npc, 0)
 		npc.item_wield_best_all()
