@@ -59,6 +59,7 @@ def get_character_classes():
 		, CtrlLEHumanBlackguardAsPC
 		, CtrlLEHumanExecutioner
 		, CtrlLEHumanThug
+		, CtrlLEKoboldWarrior
 	]
 	return result
 
@@ -108,6 +109,7 @@ def get_enemy_classes():
 		, CtrlLEHumanBlackguard
 		, CtrlLEHumanExecutioner
 		, CtrlLEHumanThug
+		, CtrlLEKoboldWarrior
 	]
 	return result
 
@@ -2600,7 +2602,7 @@ class CtrlLEHumanExecutioner(CtrlSkirmisherLE):
 	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_MAN
 
 	@classmethod
-	def get_price(cls): return 3
+	def get_price(cls): return 15
 
 	@classmethod
 	def get_title(cls): return "Human Executioner"
@@ -2661,7 +2663,7 @@ class CtrlLEHumanThug(CtrlSkirmisherLE):
 	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_MAN
 
 	@classmethod
-	def get_price(cls): return 3
+	def get_price(cls): return 4
 
 	@classmethod
 	def get_title(cls): return "Human Thug"
@@ -2712,5 +2714,56 @@ class CtrlLEHumanThug(CtrlSkirmisherLE):
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_CLUB, npc))
 
 		utils_npc.npc_generate_hp_avg_first(npc, 1)
+		npc.item_wield_best_all()
+		return
+
+class CtrlLEKoboldWarrior(CtrlSkirmisherLE):
+	@classmethod
+	def get_proto_id(cls): return 14641
+
+	@classmethod
+	def get_price(cls): return 3
+
+	@classmethod
+	def get_title(cls): return "Kobold Warrior"
+
+	@classmethod
+	def get_stats(cls): return {"Lvl": "2", "Spd": "6", "AC": "15", "HP": "5", "Type": "Small Humanoid (Reptilian)"}
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, int(self.get_stats()["Lvl"]), 8, 0)
+		#npc.make_class(toee.stat_level_fighter, int(self.get_stats()["Lvl"]))
+		#AC 15 = 10 + 1 dex + 2 leather + 1 small + 1 natural
+
+		utils_npc.npc_abilities_set(npc, [9, 13, 10, 10, 9, 8])
+
+		#npc.obj_set_int(toee.obj_f_critter_portrait, 6730) #NPC_6731_m_Raimol NPC_9311_m_panathaes
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		#npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_KORD)
+		#npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_low_intelligence_berserker)
+		npc.obj_set_int(toee.obj_f_npc_ac_bonus, 1) # natural ac
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		#hairStyle = utils_npc.HairStyle.from_npc(npc)
+		#hairStyle.style = const_toee.hair_style_bald
+		#hairStyle.color = const_toee.hair_color_black
+		#hairStyle.update_npc(npc)
+
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_LEATHER_BOOTS_BLACK, npc))
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_LEATHER_BLACK, npc))
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_BLACK, npc))
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_MASK_DROW, npc))
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_HELM_BARBARIAN, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_LEATHER_ARMOR_GREY, npc))
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_SHIELD_SMALL_WOODEN, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTSPEAR, npc))
+
+		utils_npc.npc_generate_hp_avg_first(npc, 0)
 		npc.item_wield_best_all()
 		return
