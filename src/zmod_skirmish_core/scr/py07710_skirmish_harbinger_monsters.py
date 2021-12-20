@@ -57,6 +57,7 @@ def get_character_classes():
 		, CtrlCGHalfOrcFighterAsPC
 		, CtrlLEHellHound
 		, CtrlLEHumanBlackguardAsPC
+		, CtrlLEHumanExecutioner
 	]
 	return result
 
@@ -104,9 +105,9 @@ def get_enemy_classes():
 		, CtrlCGHalfOrcFighter
 		, CtrlLEHellHound
 		, CtrlLEHumanBlackguard
+		, CtrlLEHumanExecutioner
 	]
 	return result
-
 
 class CtrlSkirmisher(ctrl_behaviour.CtrlBehaviour):
 	@classmethod
@@ -834,7 +835,6 @@ class CtrlLGSwordofHeironeousAsPC(CtrlLGSwordofHeironeous):
 	@classmethod
 	def get_proto_id(cls): return const_proto_npc.PROTO_PC_HUMAN_WOMAN
 
-
 class CtrlSkirmisherCG(CtrlSkirmisher):
 	@classmethod
 	def get_alignment_group(cls): return toee.ALIGNMENT_CHAOTIC_GOOD
@@ -1162,7 +1162,6 @@ class CtrlCGClericOfCorellonLarethian(CtrlSkirmisherCG):
 		utils_npc.npc_generate_hp_avg_first(npc)
 		npc.item_wield_best_all()
 		return
-
 
 class CtrlCGClericOfCorellonLarethianAsPC(CtrlCGClericOfCorellonLarethian):
 	@classmethod
@@ -2477,7 +2476,7 @@ class CtrlLEHellHound(CtrlSkirmisherLE):
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
-		utils_npc.npc_hitdice_set(npc, 4, 8, 0)
+		utils_npc.npc_hitdice_set(npc, int(self.get_stats()["Lvl"]), 8, 0)
 		utils_npc.npc_abilities_set(npc, [13, 13, 13, 6, 10, 6])
 
 		#npc.obj_set_int(toee.obj_f_critter_portrait, 5050) # MOO_5051_m_Shadow_Mastiff todo
@@ -2594,3 +2593,63 @@ class CtrlLEHumanBlackguardAsPC(CtrlLEHumanBlackguard):
 	@classmethod
 	def get_proto_id(cls): return const_proto_npc.PROTO_PC_HUMAN_MAN
 
+class CtrlLEHumanExecutioner(CtrlSkirmisherLE):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_MAN
+
+	@classmethod
+	def get_price(cls): return 3
+
+	@classmethod
+	def get_title(cls): return "Human Executioner"
+
+	@classmethod
+	def get_stats(cls): return {"Lvl": "4", "Spd": "6", "AC": "13", "HP": "30", "Type": "Humanoid (Human)"}
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_fighter, int(self.get_stats()["Lvl"]))
+		#AC 13 = 10 + 1 dex + 2 leather
+		#SPD 30 (6)
+		#HP 30 = 1d10 + 3d10 + 3x = {=10} + {10+15+2=27} + 3*1  {27+3=30}
+
+		#STR: 18 atk 10 = 4 bab + 5 str - 1pwr, => 8<>19 ~14
+		#DEX: 12 due to AC dex mod = 1
+		#CON: 12, see HP calculation
+		#INT: 6
+		#WIS: 12
+		#CHA: 8
+
+		utils_npc.npc_abilities_set(npc, [20, 12, 12, 8, 12, 8])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 7350) #NPC_7351_m_Turnkey.tga
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		#npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_KORD)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_low_intelligence_berserker)
+
+		npc.feat_add(toee.feat_power_attack, 0)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		npc.d20_send_signal(toee.S_SetPowerAttack, 1) # should go after refresh status, as it will be reset
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_bald
+		hairStyle.color = const_toee.hair_color_black
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_LEATHER_BOOTS_BLACK, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_LEATHER_BLACK, npc))
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_BLACK, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_MASK_DROW, npc))
+		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_HELM_BARBARIAN, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_LEATHER_ARMOR_BLACK, npc))
+		
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_GREATAXE, npc))
+
+		utils_npc.npc_generate_hp_avg_first(npc, 1)
+		npc.item_wield_best_all()
+		return

@@ -259,6 +259,30 @@ class RadialMenuEntryParent(RadialMenuEntry):
 		assert isinstance(stdNode, RadialMenuStandardNode)
 		return 0
 
+class RadialMenuEntryToggle(RadialMenuEntry):
+	def __init__(self, radialText, helpTopic):
+		assert isinstance(radialText, str)
+		assert isinstance(helpTopic, str)
+		return
+
+	def link_to_args(self, args, argIdx):
+		assert isinstance(args, EventArgs)
+		assert isinstance(argIdx, int)
+		return
+
+class RadialMenuEntrySlider(RadialMenuEntry):
+	def __init__(self, radialText, titleText, min_val, max_val, helpTopic):
+		assert isinstance(radialText, str)
+		assert isinstance(helpTopic, str)
+		assert isinstance(min_val, int)
+		assert isinstance(max_val, int)
+		return
+
+	def link_to_args(self, args, argIdx):
+		assert isinstance(args, EventArgs)
+		assert isinstance(argIdx, int)
+		return
+
 class RadialMenuStandardNode:
 	Root = 0
 	Spells = 1
@@ -275,14 +299,6 @@ class RadialMenuStandardNode:
 	Potions = 12
 	Wands = 13
 	Scrolls = 14
-
-class RadialMenuEntryParent:
-	def add_as_child(self, objHandle, parentId):
-		"""Adds this node as a child to a specified node ID, and returns the newly created node ID (so you may give it other children, etc.)"""
-		return RadialMenuEntryParent()
-	def add_as_child(self, objHandle, stdNode):
-		"""Adds this node as a child to a Standard Node (one of several hardcoded root nodes such as class, inventory etc.), and returns the newly created node ID (so you may give it other children, etc.)"""
-		return RadialMenuEntryParent()
 
 class DamagePacket:
 	def __init__(self):
