@@ -60,6 +60,7 @@ def get_character_classes():
 		, CtrlLEHumanExecutioner
 		, CtrlLEHumanThug
 		, CtrlLEKoboldWarrior
+		, CtrlLEMedusa
 	]
 	return result
 
@@ -110,6 +111,7 @@ def get_enemy_classes():
 		, CtrlLEHumanExecutioner
 		, CtrlLEHumanThug
 		, CtrlLEKoboldWarrior
+		, CtrlLEMedusa
 	]
 	return result
 
@@ -2763,6 +2765,55 @@ class CtrlLEKoboldWarrior(CtrlSkirmisherLE):
 		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_SHIELD_SMALL_WOODEN, npc))
 		
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTSPEAR, npc))
+
+		utils_npc.npc_generate_hp_avg_first(npc, 0)
+		npc.item_wield_best_all()
+		return
+
+class CtrlLEMedusa(CtrlSkirmisherLE):
+	@classmethod
+	def get_proto_id(cls): return 14280
+
+	@classmethod
+	def get_price(cls): return 62
+
+	@classmethod
+	def get_title(cls): return "Medusa"
+
+	@classmethod
+	def get_stats(cls): return {"Lvl": "6", "Spd": "6", "AC": "15", "HP": "35", "Type": "Monstrous Humanoid"}
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, int(self.get_stats()["Lvl"]), 8, 0)
+		utils_npc.npc_abilities_set(npc, [10, 15, 12, 12, 13, 15])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 6160) # NPC_6161_m_Zuggtmoy_D todo
+		npc.obj_set_int(toee.obj_f_critter_gender, toee.gender_male)
+		#npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_lawful)
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_npc_ac_bonus, 3) # natural ac
+		npc.obj_set_int(toee.obj_f_npc_save_fortitude_bonus, 2)
+		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 5)
+		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 5)
+
+		cat = const_toee.mc_type_monstrous_humanoid
+		npc.obj_set_int64(toee.obj_f_critter_monster_category, cat)
+
+		#Melee: +5/+3 (5/5 + Poison)
+		#Ranged: +9/+4 (5)
+
+		#npc.condition_add_with_args("Base_Attack_Bonus1", 6)
+
+		npc.feat_add(toee.feat_martial_weapon_proficiency_shortbow, 0)
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTBOW, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_ARROW_QUIVER, npc)).obj_set_int(toee.obj_f_ammo_quantity, 100)
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_DAGGER, npc))
+
 
 		utils_npc.npc_generate_hp_avg_first(npc, 0)
 		npc.item_wield_best_all()
