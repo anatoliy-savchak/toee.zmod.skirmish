@@ -61,6 +61,7 @@ def get_character_classes():
 		, CtrlLEHumanThug
 		, CtrlLEKoboldWarrior
 		, CtrlLEMedusa
+		, CtrlLEMindFlayer
 	]
 	return result
 
@@ -112,6 +113,7 @@ def get_enemy_classes():
 		, CtrlLEHumanThug
 		, CtrlLEKoboldWarrior
 		, CtrlLEMedusa
+		, CtrlLEMindFlayer
 	]
 	return result
 
@@ -2814,6 +2816,52 @@ class CtrlLEMedusa(CtrlSkirmisherLE):
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_AMMO_ARROW_QUIVER, npc)).obj_set_int(toee.obj_f_ammo_quantity, 100)
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_DAGGER, npc))
 
+
+		utils_npc.npc_generate_hp_avg_first(npc, 0)
+		npc.item_wield_best_all()
+		return
+
+class CtrlLEMindFlayer(CtrlSkirmisherLE):
+	@classmethod
+	def get_proto_id(cls): return 14290
+
+	@classmethod
+	def get_price(cls): return 35
+
+	@classmethod
+	def get_title(cls): return "Mind Flayer"
+
+	@classmethod
+	def get_stats(cls): return {"Lvl": "8", "Spd": "6", "AC": "15", "HP": "45", "Type": "Aberration"}
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, int(self.get_stats()["Lvl"]), 8, 0)
+		utils_npc.npc_abilities_set(npc, [12, 14, 12, 19, 17, 17])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 6420) # NPC_6421_m_Crone todo
+		npc.obj_set_int(toee.obj_f_critter_gender, toee.gender_male)
+		#npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_lawful)
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_npc_ac_bonus, 3) # natural ac
+		npc.obj_set_int(toee.obj_f_npc_save_fortitude_bonus, 2)
+		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 2)
+		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 6)
+
+		cat = const_toee.mc_type_aberration
+		npc.obj_set_int64(toee.obj_f_critter_monster_category, cat)
+
+		#Melee: +8/+8 (5)
+		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_slap)
+		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 8-1) # natural bab
+		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 2) # x
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d4").packed)
+
+		#npc.condition_add_with_args("Base_Attack_Bonus1", 6)
+
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
 
 		utils_npc.npc_generate_hp_avg_first(npc, 0)
 		npc.item_wield_best_all()

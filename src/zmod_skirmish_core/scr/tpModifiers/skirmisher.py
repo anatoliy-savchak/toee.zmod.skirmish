@@ -50,10 +50,21 @@ def SkirmisherStart_OnBuildRadialMenuEntry(attachee, args, evt_obj):
 				item = tpdp.RadialMenuEntryPythonAction(title, toee.D20A_PYTHON_ACTION, PA_SKIRMISHER, tag, "TAG_INTERFACE_HELP")
 				item_id = item.add_as_child(attachee, creatures_id)
 
-		# info
+		# start
 		if (1):
-			game_start = tpdp.RadialMenuEntryPythonAction("START", toee.D20A_PYTHON_ACTION, PA_SKIRMISHER, 5050, "TAG_INTERFACE_HELP")
+			game_start = tpdp.RadialMenuEntryParent("Start")
 			game_start_id = game_start.add_as_child(attachee, root_id)
+
+			if (1):
+				random_start = tpdp.RadialMenuEntryPythonAction("Random Start", toee.D20A_PYTHON_ACTION, PA_SKIRMISHER, 5050, "TAG_INTERFACE_HELP")
+				random_start_id = random_start.add_as_child(attachee, game_start_id)
+
+				random_options = tpdp.RadialMenuEntryParent("Random Options")
+				random_options_id = random_options.add_as_child(attachee, game_start_id)
+
+				#if (random_options_id):
+				#	random_options = tpdp.RadialMenuEntryParent("Random Options")
+				#	RadialMenuEntryToggle
 
 	except Exception, e:
 		print "SkirmisherStart_OnBuildRadialMenuEntry:"
@@ -106,7 +117,7 @@ def SkirmisherStart_OnD20PythonActionPerform(attachee, args, evt_obj):
 	return 1
 
 
-modObj = templeplus.pymod.PythonModifier(GetConditionName(), 3) # 
+modObj = templeplus.pymod.PythonModifier(GetConditionName(), 10) # 
 modObj.AddHook(toee.ET_OnBuildRadialMenuEntry, toee.EK_NONE, SkirmisherStart_OnBuildRadialMenuEntry, ())
 modObj.AddHook(toee.ET_OnD20PythonActionCheck, PA_SKIRMISHER, SkirmisherStart_OnD20PythonActionCheck, ())
 modObj.AddHook(toee.ET_OnD20PythonActionPerform, PA_SKIRMISHER, SkirmisherStart_OnD20PythonActionPerform, ())
