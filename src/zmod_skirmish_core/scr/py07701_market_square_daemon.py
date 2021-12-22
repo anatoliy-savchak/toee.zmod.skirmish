@@ -1,6 +1,7 @@
 import toee, debug, utils_toee, utils_storage, utils_obj, utils_item, const_toee, ctrl_daemon, ctrl_daemon2
 import ctrl_behaviour, py06122_cormyr_prompter, factions_zmod, utils_npc
 import monster_info, module_quests, module_consts, const_proto_sceneries, utils_skirmish
+from py07710_skirmish_harbinger_monsters import * 
 
 DAEMON_SCRIPT_ID = 7701
 DAEMON_GID = "G_8E5D3B06_98EC_4913_85D2_64DA772E5791"
@@ -55,7 +56,8 @@ class CtrlMakretSquare(ctrl_daemon2.CtrlDaemon2):
 	def place_monsters(self):
 		#critter_classes = utils_skirmish.generate_enemies1(100, toee.ALIGNMENT_LAWFUL_GOOD)
 		#critter_classes = utils_skirmish.generate_enemies1(100, toee.ALIGNMENT_LAWFUL_EVIL)
-		critter_classes = utils_skirmish.generate_enemies1(100, toee.ALIGNMENT_CHAOTIC_GOOD)
+		#critter_classes = utils_skirmish.generate_enemies1(100, toee.ALIGNMENT_CHAOTIC_GOOD)
+		critter_classes = (CtrlLGClericOfYondalla, CtrlLGDwarfAxefighter, CtrlLGDwarfAxefighter, CtrlLGDwarfAxefighter, CtrlLGEmberHumanMonk, CtrlLGSunSoulInitiate, CtrlLGSunSoulInitiate, CtrlCGJozanClericOfPelor, CtrlLGManAtArms, CtrlLGManAtArms, CtrlLGManAtArms, CtrlLGManAtArms)
 		print(critter_classes)
 
 		i = -1

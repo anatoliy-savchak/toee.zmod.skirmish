@@ -62,6 +62,7 @@ def get_character_classes():
 		, CtrlLEKoboldWarrior
 		, CtrlLEMedusa
 		, CtrlLEMindFlayer
+		, CtrlLEMummy
 	]
 	return result
 
@@ -114,6 +115,7 @@ def get_enemy_classes():
 		, CtrlLEKoboldWarrior
 		, CtrlLEMedusa
 		, CtrlLEMindFlayer
+		, CtrlLEMummy
 	]
 	return result
 
@@ -2860,6 +2862,61 @@ class CtrlLEMindFlayer(CtrlSkirmisherLE):
 
 		#npc.condition_add_with_args("Base_Attack_Bonus1", 6)
 
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		utils_npc.npc_generate_hp_avg_first(npc, 0)
+		npc.item_wield_best_all()
+		return
+
+class CtrlLEMummy(CtrlSkirmisherLE):
+	@classmethod
+	def get_proto_id(cls): return 14137
+
+	@classmethod
+	def get_price(cls): return 36
+
+	@classmethod
+	def get_title(cls): return "Mummy"
+
+	@classmethod
+	def get_stats(cls): return {
+			"Lvl": "8", 
+			"Spd": "4", 
+			"AC": "20", 
+			"HP": "55", 
+			"Type": "Undead",
+			"Melee": "+11 (15)"
+		}
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, int(self.get_stats()["Lvl"]), 12, 0)
+		utils_npc.npc_abilities_set(npc, [24, 10, 10, 6, 14, 15])
+
+		#npc.obj_set_int(toee.obj_f_critter_portrait, 6420) # NPC_6421_m_Crone todo 
+		npc.obj_set_int(toee.obj_f_critter_gender, toee.gender_male)
+		#npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_lawful)
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+		npc.obj_set_int(toee.obj_f_npc_ac_bonus, 10) # natural ac
+		npc.obj_set_int(toee.obj_f_npc_save_fortitude_bonus, 2)
+		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 2)
+		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 6)
+
+		cat = const_toee.mc_type_undead
+		npc.obj_set_int64(toee.obj_f_critter_monster_category, cat)
+
+		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_slam)
+		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 4) # natural bab: +4
+		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 1) # x
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d6").packed)
+
+		npc.condition_add("Monster_Two_Handed")
+		npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
+
+		npc.feat_add(toee.feat_great_fortitude, 0)
+		npc.feat_add(toee.feat_toughness, 0)
 		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
 

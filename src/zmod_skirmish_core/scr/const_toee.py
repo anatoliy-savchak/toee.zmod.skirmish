@@ -247,13 +247,13 @@ mc_type_fey = 6
 mc_type_undead = 15
 
 # natural weapon type, PHB p. 312
-nwt_bite = 0
-nwt_claw = 1
+nwt_bite = 0 # Bite: The creature attacks with its mouth, dealing piercing, slashing, and bludgeoning damage.
+nwt_claw = 1 # Claw or Talon:The creature rips with a sharp appendage, dealing piercing and slashing damage.
 nwt_rake = 2
-nwt_gore = 3
-nwt_slap = 4
-nwt_slam = 5
-nwt_sting = 6
+nwt_gore = 3 # Gore:The creature spears the opponent with an antler, horn, or similar appendage, dealing piercing damage. butsaty
+nwt_slap = 4 # Slap or Slam:The creature batters opponents with an appendage, dealing bludgeoning damage
+nwt_slam = 5 # Slap or Slam:The creature batters opponents with an appendage, dealing bludgeoning damage; Tentacle: The creature flails at opponents with a powerful tentacle, dealing bludgeoning (and sometimes slashing) damage.
+nwt_sting = 6 # Sting: The creature stabs with a stinger, dealing piercing damage. Sting attacks usually deal damage from poison in addition to hit point damage
 
 # female
 pcv_raspy = 0
