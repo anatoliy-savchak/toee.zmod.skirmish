@@ -292,7 +292,7 @@
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\surprised2.py" />
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\surprise_round2.py" />
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\transferrence.py" />
-    <Compile Include="zmod_skirmish_core\scr\tpModifiers\vulnurability_cold.py" />
+    <Compile Include="zmod_skirmish_core\scr\tpModifiers\vulnurability_energy.py" />
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\wand_attack.py" />
     <Compile Include="zmod_skirmish_core\scr\tpModifiers\weapon_damage_dice.py" />
     <Compile Include="zmod_skirmish_core\scr\utils_conds.py" />

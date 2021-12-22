@@ -2886,6 +2886,7 @@ class CtrlLEMummy(CtrlSkirmisherLE):
 			"AC": "20", 
 			"HP": "55", 
 			"Type": "Undead",
+			"Difficult": "5",
 			"Melee": "+11 (15)"
 		}
 
@@ -2913,8 +2914,12 @@ class CtrlLEMummy(CtrlSkirmisherLE):
 		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("1d6").packed)
 
 		npc.condition_add("Monster_Two_Handed")
+		npc.condition_add("Monster Undead")
+		npc.condition_add_with_args("Monster DR Magic", 5)
+		npc.condition_add_with_args("Vulnurability_Energy", toee.D20DT_COLD)
 		npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
 
+		npc.feat_add("Aura of Despair") #todo Aura of Fear 2
 		npc.feat_add(toee.feat_great_fortitude, 0)
 		npc.feat_add(toee.feat_toughness, 0)
 		npc.feat_add(toee.feat_alertness, 1)
