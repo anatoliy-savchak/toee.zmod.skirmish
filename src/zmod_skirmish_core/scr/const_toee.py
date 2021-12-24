@@ -256,30 +256,30 @@ nwt_slam = 5 # Slap or Slam:The creature batters opponents with an appendage, de
 nwt_sting = 6 # Sting: The creature stabs with a stinger, dealing piercing damage. Sting attacks usually deal damage from poison in addition to hit point damage
 
 # female
-pcv_raspy = 0
-pcv_nature_dweller = 1
-pcv_magician = 2
-pcv_low_intelligence_berserker = 3
-pcv_charismatic = 4
-pcv_nimble = 5
-pcv_noble = 6
-pcv_simple_warrior = 7
-pcv_zealous_healer = 8
+pcvf_raspy = 0
+pcvf_nature_dweller = 1
+pcvf_magician = 2 # halfling like
+pcvf_low_intelligence_berserker = 3
+pcvf_charismatic = 4
+pcvf_nimble = 5
+pcvf_noble = 6 # old woman
+pcvf_simple_warrior = 7 # like lizard
+pcvf_pious = 21
 
 # male
-pcv_gruff_warrior = 9
-pcv_nature_dweller = 10
-pcv_older_magician = 11
-pcv_illusionist = 12
-pcv_nimble = 13
-pcv_low_intelligence_berserker = 14
-pcv_honest_fighter = 15
-pcv_righteous_warrior = 16
-pcv_happy_trickster = 17
-pcv_arrogant = 18
-pcv_simple_warrior = 19
-pcv_lawful = 20
-pcv_pious = 21
+pcvm_zealous_healer = 8
+pcvm_gruff_warrior = 9
+pcvm_nature_dweller = 10
+pcvm_older_magician = 11
+pcvm_illusionist = 12
+pcvm_nimble = 13
+pcvm_low_intelligence_berserker = 14
+pcvm_honest_fighter = 15
+pcvm_righteous_warrior = 16
+pcvm_happy_trickster = 17
+pcvm_arrogant = 18
+pcvm_simple_warrior = 19
+pcvm_lawful = 20
 
 # Poisons, desc combat.mes + 300
 poison_small_centipede = 0

@@ -229,6 +229,7 @@ class CtrlLGClericOfOrder(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
 		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.good)
 		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.law)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcvm_righteous_warrior)
 
 		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
@@ -318,6 +319,7 @@ class CtrlLGClericOfYondalla(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_YONDALLA)
 		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.good)
 		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.protection)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcvm_illusionist)
 
 		npc.feat_add(toee.feat_martial_weapon_proficiency_short_sword, 1)
 
@@ -986,6 +988,7 @@ class CtrlLGSwordofHeironeous(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
 		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.good)
 		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.protection)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcvf_pious)
 
 		npc.feat_add(toee.feat_exotic_weapon_proficiency_bastard_sword, 0)
 		npc.feat_add(toee.feat_power_attack, 0)
@@ -1089,9 +1092,6 @@ class CtrlSkirmisherCG(CtrlSkirmisher):
 	def get_alignment_group(cls): return toee.ALIGNMENT_CHAOTIC_GOOD
 
 class CtrlCGJozanClericOfPelor(CtrlSkirmisherCG):
-	# SPECIAL ABILITIES: Unique. Turn Undead 2 *.
-	# SPELLS: 1st-command ** (range 6; Stun; DC 13), CLW *.
-	#
 	@classmethod
 	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_MAN
 
@@ -1104,16 +1104,30 @@ class CtrlCGJozanClericOfPelor(CtrlSkirmisherCG):
 	@classmethod
 	def get_alignment_groups(cls): return [cls.get_alignment_group(), toee.ALIGNMENT_LAWFUL_GOOD]
 
+	def get_stats(cls): return {
+			"Lvl": "4", 
+			"Spd": "4", 
+			"AC": "16", 
+			"HP": "10", 
+			"Type": "Humanoid (Human)",
+			"Melee": "+2 (5)",
+			"Special Abilities": {
+				"Turn Undead": "4",
+			},
+			"Unique": "1",
+			"Spells": "1st—command ❑ (range 6; Stun; DC 13), cure light wounds ❑ (touch; heal 5 hp).",
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
-		npc.make_class(toee.stat_level_cleric, 1)
+		npc.make_class(toee.stat_level_cleric, int(self.get_stats()["Lvl"]))
 		#AC 16 = 10 + 5 chain mail + 0 dex + 1 light shield
 		#SPD 20 (4) should be med armor
 		#HP 10 = 1d8 + 2 => con: 14
 
-		#STR: 14 due to atk is 2 = 0 bab (lv 1) + 2 str; dmg will be 1d6+2 = 7
+		#STR: 14 due to atk is 2 = 0 bab (lv 1) + 2 str; dmg will be 1d6+2 ~ 5
 		#DEX: 10 due to AC dex mod = 0
 		#CON: 14, see HP calculation
 		#INT: 08 any
@@ -1170,11 +1184,26 @@ class CtrlCGArcaneArcher(CtrlSkirmisherCG):
 	@classmethod
 	def get_commander_level(cls): return 3
 
+	def get_stats(cls): return {
+			"Lvl": "8", 
+			"Spd": "6", 
+			"AC": "17", 
+			"HP": "40", 
+			"Type": "Humanoid (Elf)",
+			"Melee": "+8/+3 (5)",
+			"Ranged": " +13/+13/+8 (5 magic)",
+			"Commander Effect": "Followers with ranged attacks gain ranged attack +2, Selective Shot 2.",
+			"Special Abilities": {
+				"Precise Shot": "",
+				"Selective Shot": "2",
+			}
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
-		npc.make_class(toee.stat_level_ranger, 8)
+		npc.make_class(toee.stat_level_ranger, int(self.get_stats()["Lvl"]))
 		#AC 16 = 10 + 2 leather + 5 dex
 		#SPD 30 (6) should be light armor
 		#HP 10 = 1d8 + 7(d8 + 1)/2 => con: 10
@@ -1193,6 +1222,7 @@ class CtrlCGArcaneArcher(CtrlSkirmisherCG):
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_CORELLON_LARETHIAN)
 		#npc.obj_set_int(toee.obj_f_critter_domain_1, toee.healing)
 		#npc.obj_set_int(toee.obj_f_critter_domain_2, toee.strength)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcvm_righteous_warrior)
 
 		npc.feat_add(toee.feat_weapon_focus_longbow, 0)
 		npc.feat_add(toee.feat_point_blank_shot, 0)
@@ -1377,6 +1407,7 @@ class CtrlCGClericOfCorellonLarethian(CtrlSkirmisherCG):
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_CORELLON_LARETHIAN)
 		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.protection)
 		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.war)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcvm_nature_dweller)
 
 		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
@@ -1905,6 +1936,7 @@ class CtrlCGVadaniaHalfElfDruid(CtrlSkirmisherCG):
 		npc.obj_set_int(toee.obj_f_critter_portrait, 760) #HUF_0760_b_adamo
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcvf_charismatic)
 
 		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
@@ -2242,7 +2274,7 @@ class CtrlLELizardfolk(CtrlSkirmisherLE):
 
 		npc.obj_set_int(toee.obj_f_critter_portrait, 3520) 
 		npc.obj_set_int(toee.obj_f_critter_gender, toee.gender_male)
-		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_lawful)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcvm_lawful)
 		npc.obj_set_int(toee.obj_f_critter_alignment, toee.ALIGNMENT_NEUTRAL)
 		npc.obj_set_int(toee.obj_f_npc_ac_bonus, 5) # natural ac
 		npc.obj_set_int(toee.obj_f_npc_save_fortitude_bonus, 5)
@@ -2679,7 +2711,7 @@ class CtrlCGHalfOrcFighter(CtrlSkirmisherLE):
 		npc.obj_set_int(toee.obj_f_critter_portrait, 3020) #HOM_3020_b_barbarian
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_KORD)
-		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_low_intelligence_berserker)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcvm_low_intelligence_berserker)
 
 		npc.feat_add(toee.feat_weapon_focus_greataxe, 0)
 
@@ -2799,11 +2831,12 @@ class CtrlLEHumanBlackguard(CtrlSkirmisherLE):
 		utils_npc.npc_abilities_set(npc, [16, 12, 14, 10, 12, 14])
 
 		npc.obj_set_int(toee.obj_f_critter_portrait, 1060) #ELM_1060_b_paladin
-		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_arrogant)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcvm_arrogant)
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEXTOR)
 		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.evil)
 		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.destruction)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcvm_lawful)
 
 		npc.obj_set_idx_int(toee.obj_f_critter_skill_idx, toee.skill_concentration, 5 + 4*2)
 
@@ -2876,7 +2909,7 @@ class CtrlLEHumanExecutioner(CtrlSkirmisherLE):
 		npc.obj_set_int(toee.obj_f_critter_portrait, 7350) #NPC_7351_m_Turnkey.tga
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
 		#npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_KORD)
-		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_low_intelligence_berserker)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcvm_low_intelligence_berserker)
 
 		npc.feat_add(toee.feat_power_attack, 0)
 
@@ -2937,7 +2970,7 @@ class CtrlLEHumanThug(CtrlSkirmisherLE):
 		npc.obj_set_int(toee.obj_f_critter_portrait, 6730) #NPC_6731_m_Raimol NPC_9311_m_panathaes
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
 		#npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_KORD)
-		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcv_low_intelligence_berserker)
+		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcvm_low_intelligence_berserker)
 
 		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())

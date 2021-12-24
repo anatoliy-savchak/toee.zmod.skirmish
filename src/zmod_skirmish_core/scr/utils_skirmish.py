@@ -61,11 +61,19 @@ def menu_get_compatible_creatures_dict():
 
 def menu_get_creature_title(c):
 	assert isinstance(c, py07710_skirmish_harbinger_monsters.CtrlSkirmisher)
-	alignment = c.get_alignment_group()
-	al_str = utils_npc.get_alignment_short(alignment)
 	title = c.get_title()
 	price = c.get_price()
-	text = "{} {}. Cost: {}".format(al_str, title, price)
+	alignment = c.get_alignment_group()
+	alignments = c.get_alignment_groups()
+	alstr = utils_npc.get_alignment_short(alignment)
+	if (len(alignments) > 1):
+		if (len(alignments) >= 4):
+			alstr = "ANY"
+		else:
+			for a in alignments:
+				if (a == alignment): continue
+				alstr += "/" + utils_npc.get_alignment_short(a)
+	text = "{} {}. Cost: {}".format(alstr, title, price)
 	return text
 
 def menu_get_commander_title(c):
