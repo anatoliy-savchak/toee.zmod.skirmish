@@ -55,9 +55,9 @@ class CtrlMakretSquare(ctrl_daemon2.CtrlDaemon2):
 
 	def place_monsters(self):
 		#critter_classes = utils_skirmish.generate_enemies1(100, toee.ALIGNMENT_LAWFUL_GOOD)
-		#critter_classes = utils_skirmish.generate_enemies1(100, toee.ALIGNMENT_LAWFUL_EVIL)
+		critter_classes = utils_skirmish.generate_enemies1(100, toee.ALIGNMENT_LAWFUL_EVIL)
 		#critter_classes = utils_skirmish.generate_enemies1(100, toee.ALIGNMENT_CHAOTIC_GOOD)
-		critter_classes = (CtrlLGClericOfYondalla, CtrlLGDwarfAxefighter, CtrlLGDwarfAxefighter, CtrlLGDwarfAxefighter, CtrlLGEmberHumanMonk, CtrlLGSunSoulInitiate, CtrlLGSunSoulInitiate, CtrlCGJozanClericOfPelor, CtrlLGManAtArms, CtrlLGManAtArms, CtrlLGManAtArms, CtrlLGManAtArms)
+		#critter_classes = (CtrlLGClericOfYondalla, CtrlLGDwarfAxefighter, CtrlLGDwarfAxefighter, CtrlLGDwarfAxefighter, CtrlLGEmberHumanMonk, CtrlLGSunSoulInitiate, CtrlLGSunSoulInitiate, CtrlCGJozanClericOfPelor, CtrlLGManAtArms, CtrlLGManAtArms, CtrlLGManAtArms, CtrlLGManAtArms)
 		print(critter_classes)
 
 		i = -1
