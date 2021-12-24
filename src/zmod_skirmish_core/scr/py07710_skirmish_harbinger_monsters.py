@@ -27,6 +27,7 @@ def get_character_classes():
 		, CtrlLGManAtArms
 		, CtrlLGSunSoulInitiate
 		, CtrlLGSwordofHeironeousAsPC
+		, CtrlLGTordekDwarfFighter
 		, CtrlCGJozanClericOfPelor
 		, CtrlCGArcaneArcherAsPC
 		, CtrlCGAxeSister
@@ -80,6 +81,7 @@ def get_enemy_classes():
 		, CtrlLGManAtArms
 		, CtrlLGSunSoulInitiate
 		, CtrlLGSwordofHeironeous
+		, CtrlLGTordekDwarfFighter
 		, CtrlCGJozanClericOfPelor
 		, CtrlCGArcaneArcher
 		, CtrlCGAxeSister
@@ -189,11 +191,26 @@ class CtrlLGClericOfOrder(CtrlSkirmisherLG):
 	@classmethod
 	def get_title(cls): return "Cleric of Order"
 
+	@classmethod
+	def get_stats(cls): return {
+			"Lvl": "4", 
+			"Spd": "6", 
+			"AC": "16", 
+			"HP": "25", 
+			"Type": "Humanoid (Human)",
+			"Melee": "+4 (5)",
+			"Special Abilities": {
+				"Turn Undead": "4"
+			},
+			"Commander Effect": "Followers rallied by this creature can take their turn normally if they rally successfully.",
+			"Spells": "1st—command ❑❑ (range 6; Stun; DC 13), shield of faith ❑ (touch; +2 AC); 2nd—major resistance ❑❑ (touch; Save +3)."
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
-		npc.make_class(toee.stat_level_cleric, 4)
+		npc.make_class(toee.stat_level_cleric, int(self.get_stats()["Lvl"]))
 		#AC 16 = 10 + 4 chain shirt + 2 dex
 		#SPD 40 (6) should be light armor
 		#HP 25 = 1d8 + 3d8 + 4*x => 8 + 1 + 4.5 + 1 + 4.5 + 1 + 4.5 + 1 = 8 + 4 + 13.5 = 25 => con: 12
@@ -262,11 +279,27 @@ class CtrlLGClericOfYondalla(CtrlSkirmisherLG):
 	@classmethod
 	def get_title(cls): return "Cleric of Yondalla"
 
+	@classmethod
+	def get_stats(cls): return {
+			"Lvl": "2", 
+			"Spd": "3", 
+			"AC": "23", 
+			"HP": "15", 
+			"Type": "Small Humanoid (Halfling)",
+			"Melee": "+0 (5)",
+			"Special Abilities": {
+				"Turn Undead": "4",
+				"Save": "+4"
+			},
+			"Commander Effect": "Attack +2 against larger creatures. WARBAND BUILDING: Halflings of any faction are legal in your warband.",
+			"Spells": "1st—cure light wounds ❑❑ (touch; heal 5 hp), magic weapon ❑ (touch; attack +1, ignore DR)."
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
-		npc.make_class(toee.stat_level_cleric, 2)
+		npc.make_class(toee.stat_level_cleric, int(self.get_stats()["Lvl"]))
 		#AC 23 = 10 + 8 full plate + 1 dex + 1 small being + 3 heavy shield +1
 		#SPD 15 (2)
 		#HP 15 = 1d8 + 1d8 + 2*x => 8 + 4 + 1 + 2*1 = 15 => con: 12
@@ -332,11 +365,25 @@ class CtrlLGDwarfAxefighter(CtrlSkirmisherLG):
 	@classmethod
 	def get_title(cls): return "Dwarf Axefighter"
 
+	@classmethod
+	def get_stats(cls): return {
+			"Lvl": "3", 
+			"Spd": "4", 
+			"AC": "19", 
+			"HP": "30", 
+			"Type": "Humanoid (Dwarf)",
+			"Melee": "+7 (10)",
+			"Special Abilities": {
+				"Cleave": "",
+				"Save": "+4"
+			}
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
-		npc.make_class(toee.stat_level_fighter, 3)
+		npc.make_class(toee.stat_level_fighter, int(self.get_stats()["Lvl"]))
 		#AC 19 = 10 + 5 chain mail + 2 dex + 2 heavy shield
 		#SPD 20 (4)
 		#HP 30 = 1d10 + 2d10 + 3*x => 10 + 2*10/2 + 1 + 3*2 = 31 => con: 14
@@ -355,7 +402,7 @@ class CtrlLGDwarfAxefighter(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
 
 		npc.feat_add(toee.feat_weapon_focus_battleaxe, 0)
-		npc.feat_add(toee.feat_cleave, 1)
+		npc.feat_add(toee.feat_cleave, 0)
 
 		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
@@ -388,11 +435,28 @@ class CtrlLGEmberHumanMonk(CtrlSkirmisherLG):
 	@classmethod
 	def get_title(cls): return "Ember, Human Monk"
 
+	@classmethod
+	def get_stats(cls): return {
+			"Lvl": "6", 
+			"Spd": "10", 
+			"AC": "20", 
+			"HP": "35", 
+			"Type": "Humanoid (Human)",
+			"Unique": "1",
+			"Melee": "+7/+7 (5 magic)",
+			"Special Abilities": {
+				"Deflect Arrows": "+4 AC against ranged attacks",
+				"Mobility": "+4 AC against attacks of opportunity",
+				"Save": "+4",
+				"Stunning Attack": {"Charges": "2", "DC": "15"}
+			}
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
-		npc.make_class(toee.stat_level_monk, 6)
+		npc.make_class(toee.stat_level_monk, int(self.get_stats()["Lvl"]))
 		#AC 19 = 10 + 2 wis + 4 dex + 1 monk
 		#SPD 20 (4)
 		#HP 30 = 1d8 + 5d8 + 3*x => 8 + 5*(8+1)/2 + 6*1 = 36 => con: 12
@@ -450,11 +514,22 @@ class CtrlLGEvokersApprentice(CtrlSkirmisherLG):
 	@classmethod
 	def get_title(cls): return "Evoker's Apprentice"
 
+	@classmethod
+	def get_stats(cls): return {
+			"Lvl": "1", 
+			"Spd": "6", 
+			"AC": "12", 
+			"HP": "5", 
+			"Type": "Humanoid (Human)",
+			"Melee": "+0 (5)",
+			"Spells": "1st—magic missile ❑ (sight; 5 damage), magic weapon ❑ (touch; attack +1, ignore DR)."
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
-		npc.make_class(toee.stat_level_wizard, 1)
+		npc.make_class(toee.stat_level_wizard, int(self.get_stats()["Lvl"]))
 		#AC 12 = 10 + 2 dex
 		#SPD 30 (6) should be light armor
 		#HP 5 = 1d4 + 1 => con: 12
@@ -505,11 +580,21 @@ class CtrlLGHalflingVeteran(CtrlSkirmisherLG):
 	@classmethod
 	def get_title(cls): return "Halfling Veteran"
 
+	@classmethod
+	def get_stats(cls): return {
+			"Lvl": "5", 
+			"Spd": "4", 
+			"AC": "19", 
+			"HP": "35", 
+			"Type": "Small Humanoid (Halfling)",
+			"Melee": "+9/+9 (5)"
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
-		npc.make_class(toee.stat_level_fighter, 5)
+		npc.make_class(toee.stat_level_fighter, int(self.get_stats()["Lvl"]))
 		#AC 19 = 10 + 5 chain mail + 2 dex + 1 dodge + 1 twd
 		#SPD 20 (4)
 		#HP 35 = 1d10 + 4d10 + 3*x => 32 + 5*1 = 37 => con: 12
@@ -565,10 +650,25 @@ class CtrlLGHoundArchon(CtrlSkirmisherLG):
 	@classmethod
 	def get_title(cls): return "Hound Archon"
 
+	@classmethod
+	def get_stats(cls): return {
+			"Lvl": "6", 
+			"Spd": "8", 
+			"AC": "19", 
+			"HP": "35", 
+			"Type": "Outsider",
+			"Melee": "+8/+3 (10)",
+			"Special Abilities": {
+				"DR": "5",
+				"Spell Resistance": "11",
+			},
+			"Spells": "4th—dimension door (unlimited uses) (self; place this creature in any space it can see at least part of)."
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
-		utils_npc.npc_hitdice_set(npc, 6, 8, 0)
+		utils_npc.npc_hitdice_set(npc, int(self.get_stats()["Lvl"]), 8, 0)
 		utils_npc.npc_abilities_set(npc, [15, 10, 13, 10, 13, 12])
 
 		#npc.obj_set_int(toee.obj_f_critter_portrait, 2500) #HAM_2500_b_rogue
@@ -579,17 +679,15 @@ class CtrlLGHoundArchon(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 5)
 		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 5)
 
-		npc.feat_add(toee.feat_improved_initiative, 0)
-		npc.feat_add(toee.feat_power_attack, 1)
-
-		#npc.condition_add_with_args("Base_Attack_Bonus1", 5)
-		#npc.condition_add("Base_Attack_Bonus5")
-		npc.condition_add_with_args("Spell Resistance", 16)
+		npc.condition_add_with_args("Spell Resistance", 11)
 		npc.condition_add_with_args("Monster DR Magic", 5)
+		npc.condition_add_with_args("Base_Movement", 0, 133) # should be 40 ft, factor: 1.33 = 40/30
 
+		npc.feat_add(toee.feat_improved_initiative, 0)
+		#npc.feat_add(toee.feat_power_attack, 1)
 		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
-		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_GREATSWORD, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_GREATSWORD, npc)) # avg 10
 
 		utils_npc.npc_generate_hp_avg_first(npc, 0)
 		npc.item_wield_best_all()
@@ -603,12 +701,24 @@ class CtrlLGHumanCommoner(CtrlSkirmisherLG):
 	def get_price(cls): return 3
 
 	@classmethod
+	def get_stats(cls): return {
+			"Lvl": "1", 
+			"Spd": "6", 
+			"AC": "10", 
+			"HP": "5", 
+			"Type": "Humanoid (Human)",
+			"Difficult": "7",
+			"Melee": "+0 (5)",
+			"Difficult": "7"
+		}
+
+	@classmethod
 	def get_title(cls): return "Human Commoner"
 
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
-		utils_npc.npc_hitdice_set(npc, 1, 4, 0)
+		utils_npc.npc_hitdice_set(npc, int(self.get_stats()["Lvl"]), 4, 0)
 		utils_npc.npc_abilities_set(npc, [10, 10, 12, 10, 10, 8])
 
 		npc.obj_set_int(toee.obj_f_critter_portrait, 6210) #NPC_6211_m_Tupperelo
@@ -644,10 +754,28 @@ class CtrlLGLargeEarthElemental(CtrlSkirmisherLG):
 	@classmethod
 	def get_title(cls): return "Large Earth Elemental"
 
+	@classmethod
+	def get_stats(cls): return {
+			"Lvl": "8", 
+			"Spd": "4", 
+			"AC": "18", 
+			"HP": "70", 
+			"Type": "Large Elemental",
+			"Difficult": "12",
+			"Melee": "+4/+4 (25)",
+			"Special Abilities": {
+				"Requires Commander Ally": "",
+				"Burrow": "4",
+				"Cleave": "",
+				"DR": "5",
+				"Melee Reach": "2"
+			}
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
-		utils_npc.npc_hitdice_set(npc, 8, 8, 0)
+		utils_npc.npc_hitdice_set(npc, int(self.get_stats()["Lvl"]), 8, 0)
 		utils_npc.npc_abilities_set(npc, [25, 8, 19, 6, 11, 11])
 
 		#npc.obj_set_int(toee.obj_f_critter_portrait, 2500) #HAM_2500_b_rogue
@@ -658,14 +786,17 @@ class CtrlLGLargeEarthElemental(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_npc_save_reflexes_bonus, 2)
 		npc.obj_set_int(toee.obj_f_npc_save_willpower_bonus, 2)
 
-		# he is using power attack 8, todo!
-		# atk +4/+4 => -3/-3 dmg 2d8+7=> 2d8+0
-		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, 5) # Slam
-		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, -3)
-		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 2)
-		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("2d8+8").packed)
+		# atk 12 = 6 bab (Elemental HD 8*3/4) + 7 str - 1 large
+		# atk must be 4 => power attack -8
 
-		npc.feat_add(toee.feat_cleave, 1)
+		# atk +4/+4 => -3/-3 dmg 2d8+7 + 8=> (17 + 31)/2=24
+		npc.obj_set_idx_int(toee.obj_f_attack_types_idx, 0, const_toee.nwt_slap)
+		npc.obj_set_idx_int(toee.obj_f_attack_bonus_idx, 0, 6) # bab 6?
+		npc.obj_set_idx_int(toee.obj_f_critter_attacks_idx, 0, 2)
+		npc.obj_set_idx_int(toee.obj_f_critter_damage_idx, 0, toee.dice_new("2d8").packed)
+
+		npc.feat_add(toee.feat_cleave, 0)
+		npc.feat_add(toee.feat_power_attack, 0)
 
 		npc.condition_add("Monster Subdual Immunity")
 		npc.condition_add("Monster Special Fade Out")
@@ -673,8 +804,8 @@ class CtrlLGLargeEarthElemental(CtrlSkirmisherLG):
 		npc.condition_add_with_args("Monster DR Magic", 5)
 
 		npc.feat_add(toee.feat_alertness, 1)
+		npc.d20_send_signal("Set Power Attack Value", 8) # should go after refresh status, as it will be reset
 		self.setup_name(npc, self.get_title())
-		#self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_GREATSWORD, npc))
 
 		utils_npc.npc_generate_hp_avg_first(npc, 0)
 		npc.item_wield_best_all()
@@ -690,10 +821,20 @@ class CtrlLGManAtArms(CtrlSkirmisherLG):
 	@classmethod
 	def get_title(cls): return "Man-at-Arms"
 
+	@classmethod
+	def get_stats(cls): return {
+			"Lvl": "1", 
+			"Spd": "4", 
+			"AC": "19", 
+			"HP": "5", 
+			"Type": "Humanoid (Human)",
+			"Melee": "+3 (5)"
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
-		utils_npc.npc_hitdice_set(npc, 1, 4, 0)
+		utils_npc.npc_hitdice_set(npc, int(self.get_stats()["Lvl"]), 4, 0)
 		utils_npc.npc_abilities_set(npc, [10, 10, 12, 10, 10, 8])
 
 		npc.obj_set_int(toee.obj_f_critter_portrait, 6880) #NPC_6881_m_L_Guard
@@ -733,11 +874,27 @@ class CtrlLGSunSoulInitiate(CtrlSkirmisherLG):
 	@classmethod
 	def get_title(cls): return "Sun Soul Initiate"
 
+	@classmethod
+	def get_stats(cls): return {
+			"Lvl": "3", 
+			"Spd": "8", 
+			"AC": "15", 
+			"HP": "15", 
+			"Type": "Humanoid (Human)",
+			"Melee": "+3/+3 (5)",
+			"Special Abilities": {
+				"Deflect Arrows": "+4 AC against ranged attacks",
+				"Mobility": "+4 AC against attacks of opportunity",
+				"Save +4": "",
+				"Stunning Attack": "Charges: 1, DC: 13",
+			}
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
-		npc.make_class(toee.stat_level_monk, 3)
+		npc.make_class(toee.stat_level_monk, int(self.get_stats()["Lvl"]))
 		#AC 15 = 10 + 2 wis + 3 dex + 0 monk
 		#SPD 20 (4)
 		#HP 15 = 1d8 + 2d8 + 3*x => 8 + 5*(8+1)/2 + 3*0 = 16 => con: 10
@@ -755,7 +912,7 @@ class CtrlLGSunSoulInitiate(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
 		npc.obj_set_int(toee.obj_f_critter_deity, toee.DEITY_HEIRONEOUS)
 
-		npc.feat_add(toee.feat_weapon_focus_unarmed_strike_medium_sized_being, 0)
+		#npc.feat_add(toee.feat_weapon_focus_unarmed_strike_medium_sized_being, 0)
 		npc.feat_add(toee.feat_weapon_finesse_unarmed_strike_medium_sized_being, 0)
 		npc.feat_add(toee.feat_mobility, 1)
 
@@ -791,23 +948,38 @@ class CtrlLGSwordofHeironeous(CtrlSkirmisherLG):
 	@classmethod
 	def get_title(cls): return "Sword of Heironeous"
 
+	def get_stats(cls): return {
+			"Lvl": "5", 
+			"Spd": "4", 
+			"AC": "20", 
+			"HP": "35", 
+			"Type": "Humanoid (Human)",
+			"Melee": "+8 (10 magic)",
+			"Special Abilities": {
+				"Fearless": "",
+				"Smite Evil": "+5"
+			},
+			"Commander Effect": "+1 AC.",
+			"Spells": "2nd—cure moderate wounds ❑ (touch; heal 10 hp).",
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
-		npc.make_class(toee.stat_level_paladin, 5)
+		npc.make_class(toee.stat_level_paladin, int(self.get_stats()["Lvl"]))
 		#AC 23 = 10 + 8 full plate + 2 heavy shield
 		#SPD 20 (4)
 		#HP 35 => con: 12
 
-		#STR: 14 due to atk is 8 = 5 bab (lv 5) + 2 str + 1 magic; dmg will be 1d8+3 = 11 not 10!
+		#STR: 14 due to atk is 8 = 5 bab (lv 5) + 3 str + 1 magic - 1 pwr; dmg~9.5
 		#DEX: 10 due to AC dex mod = 0
 		#CON: 12, see HP calculation
 		#INT: 08 any
 		#WIS: 13
 		#CHA: 10 as Smite Evil +5 = +5 lv + 0 cha
 
-		utils_npc.npc_abilities_set(npc, [14, 10, 12, 8, 13, 10])
+		utils_npc.npc_abilities_set(npc, [16, 10, 12, 8, 13, 10])
 
 		npc.obj_set_int(toee.obj_f_critter_portrait, 580) #HUF_0580_b_paladin
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
@@ -815,7 +987,10 @@ class CtrlLGSwordofHeironeous(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_critter_domain_1, toee.good)
 		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.protection)
 
+		npc.feat_add(toee.feat_exotic_weapon_proficiency_bastard_sword, 0)
+		npc.feat_add(toee.feat_power_attack, 0)
 		npc.feat_add(toee.feat_alertness, 1)
+		npc.d20_send_signal(toee.S_SetPowerAttack, 1) # should go after refresh status, as it will be reset
 		self.setup_name(npc, self.get_title())
 
 		hairStyle = utils_npc.HairStyle.from_npc(npc)
@@ -831,7 +1006,7 @@ class CtrlLGSwordofHeironeous(CtrlSkirmisherLG):
 
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_BLUE, npc))
 
-		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_LONGSWORD_PLUS_1, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SWORD_BASTARD_PLUS_1, npc))
 
 		npc.spells_memorized_forget()
 		npc.spell_memorized_add(toee.spell_cure_moderate_wounds, toee.stat_level_paladin, 1)
@@ -844,6 +1019,70 @@ class CtrlLGSwordofHeironeous(CtrlSkirmisherLG):
 class CtrlLGSwordofHeironeousAsPC(CtrlLGSwordofHeironeous):
 	@classmethod
 	def get_proto_id(cls): return const_proto_npc.PROTO_PC_HUMAN_WOMAN
+
+class CtrlLGTordekDwarfFighter(CtrlSkirmisherLG):
+	@classmethod
+	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_DWARF_MAN # 14638
+
+	@classmethod
+	def get_price(cls): return 5
+
+	@classmethod
+	def get_title(cls): return "Tordek, Dwarf Fighter"
+
+	def get_stats(cls): return {
+			"Lvl": "1", 
+			"Spd": "4", 
+			"AC": "17", 
+			"HP": "15", 
+			"Type": "Humanoid (Dwarf)",
+			"Melee": "+5 (5)",
+			"Special Abilities": {
+				"Save": "+4"
+			},
+			"Unique": "1",
+		}
+
+	def after_created(self, npc):
+		assert isinstance(npc, toee.PyObjHandle)
+
+		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
+		npc.make_class(toee.stat_level_fighter, int(self.get_stats()["Lvl"]))
+		#AC 16 = 10 + 5 chain mail + 0 dex + 2 shield
+		#SPD 20 (4) should be med armor
+		#HP 10 = 1d10 + 5 => con: 14
+
+		#STR: 14 due to atk is 5 = 1 bab (lv 1) + 2 str + 1 mkw + 1 focus; dmg will be 1d8+2 ~ 6.5
+		#DEX: 10 due to AC dex mod = 0
+		#CON: 20, see HP calculation
+		#INT: 08 any
+		#WIS: 12 
+		#CHA: 08 
+		utils_npc.npc_abilities_set(npc, [14, 10, 20-2, 12, 12, 10])
+
+		npc.obj_set_int(toee.obj_f_critter_portrait, 2030) # DWM_2030_b_fighter
+		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
+
+		npc.feat_add(toee.feat_weapon_focus_battleaxe, 0)
+		npc.feat_add(toee.feat_alertness, 1)
+		self.setup_name(npc, self.get_title())
+
+		hairStyle = utils_npc.HairStyle.from_npc(npc)
+		hairStyle.style = const_toee.hair_style_longhair
+		hairStyle.color = const_toee.hair_color_red
+		hairStyle.update_npc(npc)
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_CHAINMAIL_BOOTS, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_CHAINMAIL_GLOVES, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_CHAINMAIL_RED, npc))
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_BATTLEAXE_MASTERWORK, npc))
+
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_SHIELD_LARGE_WOODEN_4, npc))
+
+		utils_npc.npc_generate_hp_avg_first(npc, 0)
+		npc.item_wield_best_all()
+		return
 
 class CtrlSkirmisherCG(CtrlSkirmisher):
 	@classmethod
