@@ -25,6 +25,21 @@ def npc_generate_hp_random(npc):
 	#print("Current HP: {}".format(hp))
 	return hp
 
+def ensure_hp(npc, hp):
+	npc.obj_set_int(toee.obj_f_hp_pts, -65535)
+	npc.stat_level_get(toee.stat_hp_current)
+
+	pts = npc.obj_get_int(toee.obj_f_hp_pts)
+	hpc = npc.stat_level_get(toee.stat_hp_current)
+	con_bonus = hpc - pts
+	pts_new = hp - con_bonus
+	npc.obj_set_int(toee.obj_f_hp_pts, pts_new)
+
+	pts_verify = npc.obj_get_int(toee.obj_f_hp_pts)
+	hpc_verify = npc.stat_level_get(toee.stat_hp_current)
+	print('ensure_hp({}): pts: {}, hpc: {}, con_bonus: {}, pts_new: {}, pts_verify: {}, hpc_verify: {} for {}'.format(hp, pts, hpc, con_bonus, pts_new, pts_verify, hpc_verify, npc))
+	return pts_new
+
 def char_class_get_hit_dice(char_class):
 	assert isinstance(char_class, int)
 	# todo in T+
@@ -144,8 +159,12 @@ def npc_spell_ensure(npc, spell_id, stat_class, spell_level, memorize = 0):
 		result = npc.spell_known_add(spell_id, stat_class, spell_level)
 		if (not result is None):
 			if (not result):
-				print("Spell {}({}) was not added!".format(toee.game.get_spell_mesline(spell_id), spell_id))
-				debug.breakp("npc_spell_ensure")
+				has = next((ss for ss in npc.spells_known if ss.spell_enum == spell_id), None)
+				if has:
+					print("Spell {}({}) already known!".format(toee.game.get_spell_mesline(spell_id), spell_id))
+				else:
+					print("Spell {}({}) was not added!".format(toee.game.get_spell_mesline(spell_id), spell_id))
+					debug.breakp("npc_spell_ensure")
 				return 0
 		npc.spell_memorized_add(spell_id, stat_class, spell_level)
 	if (memorize):
@@ -179,6 +198,13 @@ def npc_is_alive(npc, dead_when_negative_hp = 0):
 
 def npc_is_dead_or_unconscious(npc, dead_when_negative_hp = False):
 	assert isinstance(npc, toee.PyObjHandle)
+	if npc_is_dead_or_destroyed(npc, dead_when_negative_hp): return 1
+	result = npc.d20_query(toee.Q_Unconscious)
+	if (result): return 1
+	return 0
+
+def npc_is_dead_or_destroyed(npc, dead_when_negative_hp = False):
+	assert isinstance(npc, toee.PyObjHandle)
 	if (not npc): return 1
 	object_flags = npc.object_flags_get()
 	if ((object_flags & toee.OF_DESTROYED) or (object_flags & toee.OF_OFF)): return 1
@@ -189,8 +215,6 @@ def npc_is_dead_or_unconscious(npc, dead_when_negative_hp = False):
 	result = npc.d20_query(toee.Q_Dead)
 	if (result): return 1
 	result = npc.d20_query(toee.Q_Dying)
-	if (result): return 1
-	result = npc.d20_query(toee.Q_Unconscious)
 	if (result): return 1
 	return 0
 
@@ -286,11 +310,22 @@ def find_npc_by_proto(loc, proto):
 	return OBJ_HANDLE_NULL
 
 def npc_get_cr(npc):
+	assert isinstance(npc, toee.PyObjHandle)
 	cr = 0
 	if (npc.type == toee.obj_t_npc):
 		cr = npc.obj_get_int(toee.obj_f_npc_challenge_rating)
 	level_cr = npc.stat_level_get(toee.stat_level)
-	result = cr + level_cr
+	if level_cr:
+		if (cr < 0): cr = 0
+		result = cr + level_cr
+	else:
+		if cr == -1:
+			result = 0.5
+		elif cr == -2:
+			result = 0.3
+		else:
+			result = cr
+
 	return result
 
 def npc_get_cr_exp(pc, cr):
@@ -363,6 +398,30 @@ def travel_hours_to_day_hours(travel_hours):
 	result = days * 24 + leftover
 	print("travel_hours: {}, days: {}, leftover: {}, result: {}".format(travel_hours, days, leftover, result))
 	return result
+
+def pc_turn_all(rotation):
+	for pc in toee.game.party:
+		pc.rotation = rotation
+	return
+
+def pc_award_experience_all(xp_awarded_each):
+	for pc in toee.game.party:
+		pc.award_experience(xp_awarded_each)
+	return
+
+def pc_award_experience_party(xp_awarded_party):
+	count = len(toee.game.party)
+	for pc in toee.game.party:
+		pc.award_experience(xp_awarded_party // count)
+	return
+
+def pc_award_experience_ensure(target_xp):
+	for pc in toee.game.party:
+		curr_xp = pc.obj_get_int(toee.obj_f_critter_experience)
+		delta_xp = target_xp - curr_xp
+		if delta_xp > 0:
+			pc.award_experience(delta_xp)
+	return
 
 def npc_kill_foes():
 	# import utils_npc
@@ -615,6 +674,14 @@ def stats_roll(val_min, val_max):
 		result.append(stat_roll(val_min, val_max))
 	return sorted(result, None, None, True)
 
+def stats_random(val_min, val_max):
+	assert isinstance(val_min, int)
+	assert isinstance(val_max, int)
+	result = list()
+	for i in range(0, 6):
+		result.append(toee.game.random_range(val_min, val_max))
+	return result
+
 def stats_sum(stats, sum_stats):
 	assert isinstance(npc, toee.PyObjHandle)
 	assert isinstance(stats, list)
@@ -622,6 +689,8 @@ def stats_sum(stats, sum_stats):
 	for i in range(0, len(stats)-1):
 		if (i >= len(sum_stats)): break
 		stats[i] += sum_stats[i]
+		if (stats[i] < 1):
+			stats[i] = 1
 	return stats
 
 def stats_elite_array():
@@ -689,6 +758,8 @@ def npc_goto_loc_full(npc, loc, off_x, off_y):
 	assert isinstance(loc, int)
 	x, y = utils_obj.loc2sec(loc)
 	print("goto {}, {} ({}, {}) of {}".format(x, y, off_x, off_y, npc))
+	if False:
+		toee.game.obj_create(2071, loc, off_x, off_y)
 	npc.standpoint_set(toee.STANDPOINT_DAY, -1, loc, 0, off_x, off_y)
 	npc.standpoint_set(toee.STANDPOINT_NIGHT, -1, loc, 0, off_x, off_y)
 	return loc
@@ -703,6 +774,24 @@ def npc_goto_loc(npc, loc):
 	assert isinstance(npc, toee.PyObjHandle)
 	assert isinstance(loc, int)
 	return npc_goto_loc_full(npc, loc, 0, 0)
+
+def npc_move(npc, x, y):
+	assert isinstance(npc, toee.PyObjHandle)
+	assert isinstance(x, int)
+	assert isinstance(y, int)
+	loc = utils_obj.sec2loc(x, y)
+	return npc_move_loc_full(npc, loc, 0, 0)
+
+def npc_move_loc_full(npc, loc, off_x, off_y):
+	assert isinstance(npc, toee.PyObjHandle)
+	assert isinstance(loc, int)
+	x, y = utils_obj.loc2sec(loc)
+	print("move {}, {} ({}, {}) of {}".format(x, y, off_x, off_y, npc))
+	if False:
+		toee.game.obj_create(2071, loc, off_x, off_y)
+	npc.standpoint_set(toee.STANDPOINT_DAY, -1, loc, 0, off_x, off_y)
+	npc.standpoint_set(toee.STANDPOINT_NIGHT, -1, loc, 0, off_x, off_y)
+	return loc
 
 def npc_loc_near_random(npc):
 	assert isinstance(npc, toee.PyObjHandle)
@@ -734,10 +823,10 @@ def npc_find_path_to_target(npc, target, reach_ft = None):
 	loc = npc_loc_near_random(target)
 	return loc, 0, 0
 
-def npc_hitdice_set(npc, size, number, bonus):
+def npc_hitdice_set(npc, number, size, bonus):
 	assert isinstance(npc, toee.PyObjHandle)
-	npc.obj_set_idx_int(toee.obj_f_npc_hitdice_idx, 0, size)
-	npc.obj_set_idx_int(toee.obj_f_npc_hitdice_idx, 1, number)
+	npc.obj_set_idx_int(toee.obj_f_npc_hitdice_idx, 0, number)
+	npc.obj_set_idx_int(toee.obj_f_npc_hitdice_idx, 1, size)
 	npc.obj_set_idx_int(toee.obj_f_npc_hitdice_idx, 2, bonus)
 	return
 
@@ -823,8 +912,10 @@ def build_npcs(npcs, options):
 def npc_get_reach(npc):
 	assert isinstance(npc, toee.PyObjHandle)
 
-	if ("critter_get_reach" in dir(npc)):
-		return npc.critter_get_reach()
+	if ("get_reaches" in dir(npc)):
+		reaches = npc.get_reaches()
+		if reaches:
+			return reaches[0]
 
 	reach = 5.0
 	weapon = npc.item_worn_at(toee.item_wear_weapon_primary)
@@ -928,15 +1019,26 @@ def npc_to_hit_get(npc, target):
 	tohit = ac - atk
 	return tohit, ""
 
-def npc_get_weapon(npc, primary = 1, should_be_ranged = 0):
+def npc_get_weapon(npc, primary = 1, should_be_ranged = 0, should_have_ammo = 0):
 	assert isinstance(npc, toee.PyObjHandle)
-	result = npc.item_worn_at(toee.item_wear_weapon_primary) if (primary) else npc.item_worn_at(toee.item_wear_weapon_secondary)
-	if (should_be_ranged and result):
-		if (not toee.game.is_ranged_weapon(result.get_weapon_type())):
-			result = toee.OBJ_HANDLE_NULL
+	weapon = npc.item_worn_at(toee.item_wear_weapon_primary) if (primary) else npc.item_worn_at(toee.item_wear_weapon_secondary)
+	if not weapon:
+		return toee.OBJ_HANDLE_NULL
 
-	assert isinstance(result, toee.PyObjHandle)
-	return result
+	if should_be_ranged:
+		if toee.game.is_ranged_weapon(weapon.get_weapon_type()):
+			if should_have_ammo:
+				loaded = False
+				if weapon.get_weapon_type() in (toee.wt_heavy_crossbow, toee.wt_light_crossbow):
+					loaded = weapon.obj_get_int(toee.obj_f_weapon_flags) & toee.OWF_WEAPON_LOADED
+				ammou_q = utils_item.weapon_has_ammo(npc, weapon)
+				if ammou_q <= 0 and not loaded:
+					weapon = toee.OBJ_HANDLE_NULL
+		else:
+			weapon = toee.OBJ_HANDLE_NULL
+
+	return weapon
+
 
 def npc_could_be_attacked(npc, debug_print = 0):
 	assert isinstance(npc, toee.PyObjHandle)

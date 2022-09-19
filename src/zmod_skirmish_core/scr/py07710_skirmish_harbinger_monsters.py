@@ -242,6 +242,8 @@ class CtrlLGClericOfOrder(CtrlSkirmisherLG):
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_CHAINMAIL_BOOTS, npc))
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_CHAINMAIL_GLOVES, npc))
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_CHAIN_SHIRT, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_CIRCLET_HOODLESS, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_ROBES_IVORY_TEMPLE_AIR, npc))
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_BLUE, npc))
 
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_QUARTERSTAFF, npc))
@@ -255,7 +257,8 @@ class CtrlLGClericOfOrder(CtrlSkirmisherLG):
 		npc.spell_memorized_add(toee.spell_resist_elements, toee.stat_level_cleric, 2)
 		npc.spells_pending_to_memorized()
 
-		utils_npc.npc_generate_hp_avg_first(npc)
+		#utils_npc.npc_generate_hp_avg_first(npc)
+		utils_npc.ensure_hp(npc, int(self.get_stats()["HP"]))
 		npc.item_wield_best_all()
 		return
 
@@ -301,18 +304,18 @@ class CtrlLGClericOfYondalla(CtrlSkirmisherLG):
 
 		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
 		npc.make_class(toee.stat_level_cleric, int(self.get_stats()["Lvl"]))
-		#AC 23 = 10 + 8 full plate + 1 dex + 1 small being + 3 heavy shield +1
+		#AC 23 = 10 + 8 full plate + 0 dex + 1 small being + 4 tower shield
 		#SPD 15 (2)
 		#HP 15 = 1d8 + 1d8 + 2*x => 8 + 4 + 1 + 2*1 = 15 => con: 12
 
-		#STR: 06 due to atk is 0 = 1 bab (lv 2) + 1 small - 2 str; dmg will be 1d6-2 = 4 not 5!
-		#DEX: 12 due to AC dex mod = 1
+		#STR: 10 due to atk is 0 = 1 bab (lv 2) + 1 small - 2 tower; dmg will be 1d10 = 4 not 5!
+		#DEX: 10 due to AC dex mod = 0
 		#CON: 12, see HP calculation
 		#WIS: 14 due to 1st level DC: 13 => 10 + 1 lv + 2 mod wis
 		#INT: 08 any
 		#CHA: 08 due to Turn undead 2 times = 3 - 1 mod cha
 
-		utils_npc.npc_abilities_set(npc, [8, 10, 12, 12, 12, 8]) # -2 STR, +2 DEX
+		utils_npc.npc_abilities_set(npc, [12, 8, 12, 12, 12, 8]) # -2 STR, +2 DEX
 
 		npc.obj_set_int(toee.obj_f_critter_portrait, 10) #GNM_0010_b_illusionist
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
@@ -321,7 +324,10 @@ class CtrlLGClericOfYondalla(CtrlSkirmisherLG):
 		npc.obj_set_int(toee.obj_f_critter_domain_2, toee.protection)
 		npc.obj_set_int(toee.obj_f_pc_voice_idx, const_toee.pcvm_illusionist)
 
-		npc.feat_add(toee.feat_martial_weapon_proficiency_short_sword, 1)
+		#npc.feat_add(toee.feat_martial_weapon_proficiency_short_sword, 1)
+		#npc.feat_add(toee.feat_martial_weapon_proficiency_longsword, 1)
+		npc.feat_add(toee.feat_exotic_weapon_proficiency_bastard_sword, 1)
+		npc.feat_add(toee.feat_tower_shield_proficiency, 1)
 
 		npc.feat_add(toee.feat_alertness, 1)
 		self.setup_name(npc, self.get_title())
@@ -335,12 +341,16 @@ class CtrlLGClericOfYondalla(CtrlSkirmisherLG):
 		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_GILDED_GLOVES, npc)))
 		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_HELM_PLUMED_SILVER, npc)))
 		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_FULL_PLATE, npc)))
-		item = self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_SHIELD_LARGE_STEEL, npc)))
-		item.item_condition_add_with_args("Shield Enhancement Bonus", 1)
+		#item = self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_SHIELD_LARGE_STEEL, npc)))
+		#item.item_condition_add_with_args("Shield Enhancement Bonus", 1)
+		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_SHIELD_TOWER_STEEL, npc)))
 
 		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOAK_BLUE, npc)))
 
-		self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTSWORD, npc)))
+		#self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTSWORD, npc)))
+		#self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_LONGSWORD, npc)))
+		item = self._lower_weight_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SWORD_BASTARD, npc)))
+		item.obj_set_int(toee.obj_f_size, toee.STAT_SIZE_SMALL)
 
 		npc.spells_memorized_forget()
 		npc.spell_memorized_add(toee.spell_cure_light_wounds, toee.stat_level_cleric, 1)
@@ -348,7 +358,8 @@ class CtrlLGClericOfYondalla(CtrlSkirmisherLG):
 		npc.spell_memorized_add(toee.spell_magic_weapon, toee.stat_level_cleric, 1)
 		npc.spells_pending_to_memorized()
 
-		utils_npc.npc_generate_hp_avg_first(npc)
+		#utils_npc.npc_generate_hp_avg_first(npc)
+		utils_npc.ensure_hp(npc, int(self.get_stats()["HP"]))
 		npc.item_wield_best_all()
 		return
 
@@ -416,13 +427,14 @@ class CtrlLGDwarfAxefighter(CtrlSkirmisherLG):
 
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_BOOTS_CHAINMAIL_BOOTS, npc))
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_GLOVES_CHAINMAIL_GLOVES, npc))
-		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_HELMET_CHAIN, npc))
-		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_CHAINMAIL, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_cloth.PROTO_CLOTH_HELM_GENERIC, npc))
+		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_ARMOR_CHAINMAIL_RED, npc))
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_armor.PROTO_SHIELD_LARGE_STEEL, npc))
 
 		self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_BATTLEAXE_MASTERWORK, npc))
 
-		utils_npc.npc_generate_hp_avg_first(npc)
+		#utils_npc.npc_generate_hp_avg_first(npc)
+		utils_npc.ensure_hp(npc, int(self.get_stats()["HP"]))
 		npc.item_wield_best_all()
 		return
 
@@ -459,14 +471,14 @@ class CtrlLGEmberHumanMonk(CtrlSkirmisherLG):
 
 		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
 		npc.make_class(toee.stat_level_monk, int(self.get_stats()["Lvl"]))
-		#AC 19 = 10 + 2 wis + 4 dex + 1 monk
+		#AC 20 = 10 + 3 wis + 4 dex + 1 monk
 		#SPD 20 (4)
 		#HP 30 = 1d8 + 5d8 + 3*x => 8 + 5*(8+1)/2 + 6*1 = 36 => con: 12
 
-		#STR: 16 due to atk is 7 = 4 bab (lv 6) + 1 str + 2 wpn foc + 1 magic - 1 flurry; dmg will be 1d6 + 2 = 8
+		#STR: 16 due to atk is 7 = 4 bab (lv 6) + 1 str + 2 wpn foc + 1 magic - 1 flurry; dmg will be 1d6 + 2 = 5
 		#DEX: 18 due to AC dex mod = 4
 		#CON: 12, see HP calculation
-		#WIS: 14 due to AC wis bonus = 2
+		#WIS: 16 due to AC wis bonus = 3
 		#INT: 08 any
 		#CHA: 08 any
 
@@ -1268,11 +1280,23 @@ class CtrlCGAxeSister(CtrlSkirmisherCG):
 	@classmethod
 	def get_title(cls): return "Axe Sister"
 
+	def get_stats(cls): return {
+			"Lvl": "5", 
+			"Spd": "8", 
+			"AC": "15", 
+			"HP": "50", 
+			"Type": "Humanoid (Human)",
+			"Melee": "+10 (15)",
+			"Special Abilities": {
+				"Whirlwind Attack": "on its turn, if this creature moves no more than 1 square, it can make one melee attack against every enemy creature it threatens"
+			},
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
-		npc.make_class(toee.stat_level_barbarian, 5)
+		npc.make_class(toee.stat_level_barbarian, int(self.get_stats()["Lvl"]))
 		#AC 15 = 10 + 4 shirt + 3 dex - 2 rage
 		#SPD 30 (6) should be light armor
 		#HP 40 = 1d12 + 4(d12 + 1)/2 => con: 10
@@ -1326,10 +1350,20 @@ class CtrlCGCentaur(CtrlSkirmisherCG):
 	@classmethod
 	def get_title(cls): return "Centaur"
 
+	def get_stats(cls): return {
+			"Lvl": "5", 
+			"Spd": "8", 
+			"AC": "15", 
+			"HP": "25",
+			"Type": "Large Monstrous Humanoid",
+			"Melee": "+7/+3 (10)",
+			"Ranged": "+5 (10)",
+		}
+
 	def after_created(self, npc):
 		assert isinstance(npc, toee.PyObjHandle)
 
-		utils_npc.npc_hitdice_set(npc, 4, 8, 0)
+		utils_npc.npc_hitdice_set(npc, int(self.get_stats()["Lvl"]), 8, 0)
 		utils_npc.npc_abilities_set(npc, [18, 14, 14, 8, 13, 11])
 
 		npc.obj_set_int(toee.obj_f_critter_portrait, 4400)
@@ -1370,8 +1404,6 @@ class CtrlCGCentaur(CtrlSkirmisherCG):
 		return
 
 class CtrlCGClericOfCorellonLarethian(CtrlSkirmisherCG):
-	# SPECIAL ABILITIES: Unique. Turn Undead 4 *. COMMANDER EFFECT: Elf followers gain Save +4.				
-	#
 	@classmethod
 	def get_proto_id(cls): return const_proto_npc.PROTO_NPC_ELF_MAN
 
@@ -1381,6 +1413,21 @@ class CtrlCGClericOfCorellonLarethian(CtrlSkirmisherCG):
 	@classmethod
 	def get_title(cls): return "Cleric of Corellon Larethian"
 
+	def get_stats(cls): return {
+			"Lvl": "4", 
+			"Spd": "6", 
+			"AC": "16", 
+			"HP": "25", 
+			"Type": "Humanoid (Elf)",
+			"Melee": "+5 (5)",
+			"Special Abilities": {
+				"Turn Undead": "4",
+			},
+			"Commander Effect": "Elf followers gain Save +4",
+			"Spells": "1st—bless ❑ (your warband; attack +1), magic weapon ❑❑ (touch; attack +1, ignore DR); 2nd—hold person ❑❑ (sight; Humanoids only, Paralysis; DC 14), cure moderate wounds ❑ (touch; heal 10 hp).",
+		}
+
+
 	@classmethod
 	def get_commander_level(cls): return 4
 
@@ -1388,7 +1435,7 @@ class CtrlCGClericOfCorellonLarethian(CtrlSkirmisherCG):
 		assert isinstance(npc, toee.PyObjHandle)
 
 		utils_npc.npc_hitdice_set(npc, 0, 0, 0)
-		npc.make_class(toee.stat_level_cleric, 4)
+		npc.make_class(toee.stat_level_cleric, int(self.get_stats()["Lvl"]))
 		#AC 16 = 10 + 4 chain shirt + 1 dex + 1 light shield
 		#SPD 30 (6) should be light armor
 		#HP 25 = 1d8 + 3d8 + con*3 => con: 12

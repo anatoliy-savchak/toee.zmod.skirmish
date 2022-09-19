@@ -108,7 +108,11 @@ def menu_commander_place_click(class_id):
 	npc, ctrl = c.create_obj_and_class(utils_obj.sec2loc(478, 480), 1, 1)
 	npc.condition_add("SkirmisherStart")
 	npc.rotation = const_toee.rotation_0600_oclock
-	added = toee.game.leader.pc_add(npc)
+	#added = toee.game.leader.pc_add(npc)
+	added = npc.pc_add(npc)
+	if (not added):
+		toee.game.leader.float_text_line("PC max out!")
+		npc.destroy()
 
 	warband_clear_incompatible(npc, ctrl)
 
@@ -143,7 +147,11 @@ def menu_creature_place_click(class_id):
 	npc, ctrl = c.create_obj_and_class(utils_obj.sec2loc(478, 480), 1, 1)
 	npc.condition_add("SkirmisherStart")
 	npc.rotation = const_toee.rotation_0600_oclock
-	added = toee.game.leader.pc_add(npc)
+	#added = toee.game.leader.pc_add(npc)
+	added = npc.pc_add(npc)
+	if (not added):
+		toee.game.leader.float_text_line("PC max out!")
+		npc.destroy()
 
 	warband_recalc_points()
 	return None # no error
@@ -271,7 +279,7 @@ def skirmish_settings_get(recreate = 0):
 class SkirmishSettings(object):
 	def __init__(self):
 		self.faction_alignment = toee.ALIGNMENT_LAWFUL_GOOD
-		self.points_max = 100
+		self.points_max = 60 #100
 		self.points_left = self.points_max
 		return
 
@@ -310,27 +318,44 @@ def menu_map_start_click(map_id):
 	toee.game.fade_and_teleport(60*60*24, 0, 0, map_id, 495, 506)
 	return
 
-def generate_enemies1(points, alignment_group):
+def generate_enemies1(points, alignment_group, max_price_creatures = 0, max_price_commanders = 0):
 	assert isinstance(points, int)
 	assert isinstance(alignment_group, int)
+	assert isinstance(max_price_creatures, int)
 
 	left = points
 	result = []
 	available_commanders = []
+	if (1):
+		for c in py07710_skirmish_harbinger_monsters.get_enemy_classes():
+			assert isinstance(c, py07710_skirmish_harbinger_monsters.CtrlSkirmisher)
+			if not alignment_group in c.get_alignment_groups(): continue
+			commander_level = c.get_commander_level()
+			if (commander_level <= 0): continue
+			price = c.get_price()
+			if (max_price_commanders > 0 and price > max_price_commanders): continue
+			available_commanders.append((c, c.get_price()))
+
+	if (not available_commanders): 
+		return result
+
 	available_critters = [] #(class, cost)
 	if (1):
 		for c in py07710_skirmish_harbinger_monsters.get_enemy_classes():
 			assert isinstance(c, py07710_skirmish_harbinger_monsters.CtrlSkirmisher)
-			if c.get_alignment_group() != alignment_group: continue
 			commander_level = c.get_commander_level()
-			if (commander_level > 0): 
-				available_commanders.append((c, c.get_price()))
-			else:
-				available_critters.append((c, c.get_price()))
-	
-	if (not available_commanders): return result
+			if (commander_level > 0): continue
+			price = c.get_price()
+			if (max_price_creatures > 0 and price > max_price_creatures): continue
 
-	available_critters.sort(reverse = False, key = lambda kv: kv[1])
+			compatible = False
+			for co in available_commanders:
+				if critter_ctrl_is_compatible_with_commander(c, co[0]):
+					compatible = True
+					break
+			if not compatible: continue
+			available_critters.append((c, c.get_price()))
+		available_critters.sort(reverse = False, key = lambda kv: kv[1])
 
 	primary_commander_class_t = available_commanders[toee.game.random_range(0, len(available_commanders)-1)]
 	primary_commander_class = primary_commander_class_t[0]
@@ -352,4 +377,13 @@ def generate_enemies1(points, alignment_group):
 			if (left - critter_class_t[1] < 0): continue
 		left -= critter_class_t[1]
 		result.append(critter_class_t[0])
+	return result
+
+def generate_enemies_preset1():
+	result = [py07710_skirmish_harbinger_monsters.CtrlLGSwordofHeironeous\
+		, py07710_skirmish_harbinger_monsters.CtrlLGTordekDwarfFighter\
+		, py07710_skirmish_harbinger_monsters.CtrlLGManAtArms\
+		, py07710_skirmish_harbinger_monsters.CtrlLGHalflingVeteran\
+		, py07710_skirmish_harbinger_monsters.CtrlLGDwarfAxefighter\
+		   ]
 	return result
