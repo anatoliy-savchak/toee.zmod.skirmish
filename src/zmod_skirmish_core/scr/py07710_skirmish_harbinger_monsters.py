@@ -161,6 +161,12 @@ class CtrlSkirmisher(ctrl_behaviour.CtrlBehaviour):
 		item.obj_set_int(toee.obj_f_item_weight, item.obj_get_int(toee.obj_f_item_weight) // 2)
 		return item
 
+	@staticmethod
+	def _lower_size_small(item):
+		assert isinstance(item, toee.PyObjHandle)
+		item.obj_set_int(toee.obj_f_size, toee.STAT_SIZE_SMALL)
+		return item
+
 	@classmethod
 	def get_title(cls): return None
 
@@ -512,7 +518,8 @@ class CtrlLGEmberHumanMonk(CtrlSkirmisherLG):
 		item = self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_QUARTERSTAFF, npc))
 		item.item_condition_add_with_args("Weapon Enhancement Bonus", 1)
 
-		utils_npc.npc_generate_hp_avg_first(npc)
+		#utils_npc.npc_generate_hp_avg_first(npc)
+		utils_npc.ensure_hp(npc, int(self.get_stats()["HP"]))
 		npc.item_wield_best_all()
 		return
 
@@ -580,7 +587,8 @@ class CtrlLGEvokersApprentice(CtrlSkirmisherLG):
 		npc.spell_memorized_add(toee.spell_magic_weapon, toee.stat_level_wizard, 1)
 		npc.spells_pending_to_memorized()
 
-		utils_npc.npc_generate_hp_avg_first(npc)
+		#utils_npc.npc_generate_hp_avg_first(npc)
+		utils_npc.ensure_hp(npc, int(self.get_stats()["HP"]))
 		npc.item_wield_best_all()
 		return
 
@@ -613,14 +621,14 @@ class CtrlLGHalflingVeteran(CtrlSkirmisherLG):
 		#SPD 20 (4)
 		#HP 35 = 1d10 + 4d10 + 3*x => 32 + 5*1 = 37 => con: 12
 
-		#STR: 14 due to atk is 9 = 5 bab (lv 5) + 4 dex + 1 wpf + 1 mkw - 2 twf; dmg will be 1d4 + 1 = 5, str-2
+		#STR: 16 due to atk is 9 = 5 bab (lv 5) + 4 dex + 1 wpf + 1 mkw - 2 twf; dmg will be 1d4 + 3 =~ 5
 		#DEX: 18 due to AC dex mod = 3 and 4 finesse
 		#CON: 12, see HP calculation
 		#INT: 08 any
 		#WIS: 10
 		#CHA: 08 any
 
-		utils_npc.npc_abilities_set(npc, [14, 16, 12, 8, 10, 8]) # -2 STR, +2 DEX
+		utils_npc.npc_abilities_set(npc, [18, 16, 12, 8, 10, 8]) # -2 STR, +2 DEX
 
 		npc.obj_set_int(toee.obj_f_critter_portrait, 2520) #HAM_2520_b_cabral
 		npc.obj_set_int(toee.obj_f_critter_alignment, self.get_alignment_group())
@@ -630,6 +638,7 @@ class CtrlLGHalflingVeteran(CtrlSkirmisherLG):
 		#npc.feat_add(toee.feat_greater_weapon_focus_quarterstaff, 0)
 		npc.feat_add(toee.feat_dodge, 0)
 		npc.feat_add(toee.feat_weapon_finesse_dagger, 0)
+		#npc.feat_add(toee.feat_weapon_finesse_short_sword, 0)
 		npc.feat_add(toee.feat_two_weapon_fighting, 1)
 
 		npc.feat_add(toee.feat_alertness, 1)
@@ -647,11 +656,15 @@ class CtrlLGHalflingVeteran(CtrlSkirmisherLG):
 
 		dagger1 = self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_DAGGER_MASTERWORK, npc))
 		dagger2 = self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_DAGGER_MASTERWORK, npc))
+		#dagger1 = self._lower_size_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTSWORD_MASTERWORK, npc)))
+		#dagger2 = self._lower_size_small(self._hide_loot(utils_item.item_create_in_inventory(const_proto_weapon.PROTO_WEAPON_SHORTSWORD_MASTERWORK, npc)))
 
-		utils_npc.npc_generate_hp_avg_first(npc)
 		npc.item_wield_best_all()
 		npc.item_wield(dagger1, toee.item_wear_weapon_primary)
 		npc.item_wield(dagger2, toee.item_wear_weapon_secondary)
+
+		#utils_npc.npc_generate_hp_avg_first(npc)
+		utils_npc.ensure_hp(npc, int(self.get_stats()["HP"]))
 		return
 
 class CtrlLGHoundArchon(CtrlSkirmisherLG):
